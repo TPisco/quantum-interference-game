@@ -1,0 +1,1084 @@
+{
+ "preset": "medium",
+ "output": "${OUT_DIR}/phase_shift_demo.mp4",
+ "sources": {
+  "runapp": "${SRC_DIR}/RunApp.mp4",
+  "level1": "${SRC_DIR}/level1.mp4",
+  "level23": "${SRC_DIR}/level2-3.mp4",
+  "readme": "${SRC_DIR}/readmeAndDevGuide.mp4",
+  "levelpy": "${SRC_DIR}/levelPy.mp4",
+  "l3shot": "${ASSET_DIR}/level3_results.png"
+ },
+ "crops": {
+  "level23": [
+   124,
+   0,
+   1032,
+   720
+  ],
+  "levelpy": [
+   280,
+   110,
+   1500,
+   870
+  ]
+ },
+ "assets": {
+  "backdrop": "${ASSET_DIR}/hero.png",
+  "title_card": "${ASSET_DIR}/title_card.mp4",
+  "arrows_clip": "${ASSET_DIR}/arrows_explainer.mp4",
+  "title_bg": "${ASSET_DIR}/title_bg.png"
+ },
+ "voice": {
+  "model": "seed_audio",
+  "voice": "Julian",
+  "voice_id": "95429266-c0ac-4137-a209-63b8812b0f23"
+ },
+ "vo": {
+  "s01": {
+   "file": "${VO_DIR}/s01.wav",
+   "text": "Quantum computers aren't just fancy dice. Their power comes from interference: possibilities that add up, or cancel out. Phase Shift is a puzzle game about exactly that."
+  },
+  "s02": {
+   "file": "${VO_DIR}/s02.wav",
+   "text": "It runs on Qollab. Press Run, pick a backend, like the built-in simulator or IonQ's simulators, and Qiskit loads right in the browser."
+  },
+  "s03": {
+   "file": "${VO_DIR}/s03.wav",
+   "text": "Level 1, Invisible Ink. A Hadamard splits the qubit into two paths, and a phase gate tilts the lower one. The goal: measure 1, 90% of the time. Every control works from the keyboard, too.",
+   "tts": "Level one, Invisible Ink. A Hadamard splits the qubit into two paths, and a phase gate tilts the lower one. The goal: measure one, ninety percent of the time. Every control works from the keyboard, too."
+  },
+  "s04": {
+   "file": "${VO_DIR}/s04.wav",
+   "text": "But on its own, a phase is invisible: measure now, and it's 50/50 at every angle. So I switch on a second Hadamard to recombine the paths,",
+   "tts": "But on its own, a phase is invisible: measure now, and it's fifty-fifty at every angle. So I switch on a second Hadamard to recombine the paths,"
+  },
+  "s05": {
+   "file": "${VO_DIR}/s05.wav",
+   "text": "turn the phase up to 165°, and run.",
+   "tts": "turn the phase up to one hundred sixty-five degrees, and run."
+  },
+  "s06": {
+   "file": "${VO_DIR}/s06.wav",
+   "text": "98%. Solved in a single run.",
+   "tts": "Ninety-eight percent. Solved in a single run."
+  },
+  "s07": {
+   "file": "${VO_DIR}/s07.wav",
+   "text": "Why? Each path to an outcome carries an arrow. On 0, the two arrows point opposite ways and cancel. On 1, they line up and add. That gap from 50% is interference.",
+   "tts": "Why? Each path to an outcome carries an arrow. On zero, the two arrows point opposite ways and cancel. On one, they line up and add. That gap from fifty percent is interference."
+  },
+  "s08": {
+   "file": "${VO_DIR}/s08.wav",
+   "text": "Level 2, Dark Port. A hidden phase sits on one path, and the goal is to cancel it.",
+   "tts": "Level two, Dark Port. A hidden phase sits on one path, and the goal is to cancel it."
+  },
+  "s09": {
+   "file": "${VO_DIR}/s09.wav",
+   "text": "Each run's brightness tells me how far off I am. 15%... 38%, wrong way... 6.5%... 1.7%. Dark.",
+   "tts": "Each run's brightness tells me how far off I am. Fifteen percent... thirty-eight, wrong way... six and a half... one point seven. Dark."
+  },
+  "s10": {
+   "file": "${VO_DIR}/s10.wav",
+   "text": "The mystery phase was 225°. Cancelling phases like this is how interferometers such as LIGO measure tiny shifts.",
+   "tts": "The mystery phase was two hundred twenty-five degrees. Cancelling phases like this is how interferometers such as LIGO measure tiny shifts."
+  },
+  "s11": {
+   "file": "${VO_DIR}/s11.wav",
+   "text": "Level 3. A CNOT copies which path the photon took into a detector qubit, and the interference vanishes. But you can erase what it knows.",
+   "tts": "Level three. A C-NOT copies which path the photon took into a detector qubit, and the interference vanishes. But you can erase what it knows."
+  },
+  "s12": {
+   "file": "${VO_DIR}/s12.wav",
+   "text": "With the eraser on at 180°, photon and detector disagree every time, while the photon alone stays at 50/50. The interference moved into the correlations.",
+   "tts": "With the eraser on at one-eighty, photon and detector disagree every time, while the photon alone stays at fifty-fifty. The interference moved into the correlations."
+  },
+  "s13": {
+   "file": "${VO_DIR}/s13.wav",
+   "text": "Under the hood, each level is just data: gates, controls and a target. Qiskit builds the circuit exactly as you set it."
+  },
+  "s14": {
+   "file": "${VO_DIR}/s14.wav",
+   "text": "To explain every result, the game sums all the paths through your circuit, and compares adding probabilities with adding arrows."
+  },
+  "s15": {
+   "file": "${VO_DIR}/s15.wav",
+   "text": "On Qollab, IonQ's simulator is passed straight into the game, and each confirmation is one single-circuit job, so IonQ runs exactly what you built."
+  },
+  "s16": {
+   "file": "${VO_DIR}/s16.wav",
+   "text": "It's all MIT licensed. The README explains how to run it and how it works, and the developer guide shows how to add a level. The interface builds itself."
+  },
+  "s17": {
+   "file": "${VO_DIR}/s17.wav",
+   "text": "Phase Shift. Make the probabilities interfere. Thanks for watching!"
+  }
+ },
+ "segments": [
+  {
+   "id": "s01",
+   "type": "card",
+   "background": "title_card",
+   "min": 9.0,
+   "text_at": 1.0,
+   "text": {
+    "y": 650,
+    "lines": [
+     {
+      "text": "Phase Shift",
+      "font": "title",
+      "size": 150,
+      "gap": 26
+     },
+     {
+      "text": "A quantum interference puzzle",
+      "font": "regular",
+      "size": 48,
+      "color": [
+       200,
+       208,
+       232
+      ],
+      "gap": 22
+     },
+     {
+      "text": "QISKIT  ·  IONQ  ·  QOLLAB",
+      "font": "bold",
+      "size": 28,
+      "color": [
+       92,
+       225,
+       230
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "s02",
+   "type": "clip",
+   "source": "runapp",
+   "ranges": [
+    {
+     "in": 0.0,
+     "out": 1.2
+    },
+    {
+     "freeze": 1.2,
+     "dur": 2.0
+    },
+    {
+     "in": 1.2,
+     "out": 2.1
+    },
+    {
+     "in": 3.4,
+     "out": 5.3
+    },
+    {
+     "in": 10.4,
+     "out": 13.3
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 1.2,
+     "src1": 1.2,
+     "x": 578,
+     "y": 58,
+     "w": 746,
+     "h": 968,
+     "max": 1.2
+    },
+    {
+     "src0": 10.4,
+     "src1": 13.3,
+     "x": 198,
+     "y": 90,
+     "w": 1420,
+     "h": 800,
+     "max": 1.4,
+     "ramp": 0.25
+    }
+   ],
+   "blur": [
+    {
+     "src0": 0,
+     "src1": 5.5,
+     "x": 20,
+     "y": 76,
+     "w": 125,
+     "h": 54
+    },
+    {
+     "src0": 0,
+     "src1": 5.5,
+     "x": 1778,
+     "y": 2,
+     "w": 110,
+     "h": 58
+    }
+   ],
+   "labels": [
+    {
+     "src": 0.05,
+     "dur": 3.2,
+     "x": "right",
+     "lines": [
+      [
+       "RUNS ON QOLLAB",
+       "bold",
+       22,
+       [
+        92,
+        225,
+        230
+       ]
+      ],
+      [
+       "Run  →  Select QPU  →  Run",
+       "bold",
+       36,
+       [
+        232,
+        236,
+        248
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s03",
+   "type": "clip",
+   "source": "level1",
+   "ranges": [
+    {
+     "in": 6.1,
+     "out": 9.0
+    },
+    {
+     "freeze": 9.0,
+     "dur": 2.5
+    },
+    {
+     "in": 12.0,
+     "out": 15.5
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 6.1,
+     "src1": 9.0,
+     "x": 16,
+     "y": 388,
+     "w": 628,
+     "h": 332,
+     "max": 1.7
+    }
+   ],
+   "labels": [
+    {
+     "src": 6.2,
+     "dur": 3.6,
+     "x": "right",
+     "lines": [
+      [
+       "LEVEL 1",
+       "bold",
+       22,
+       [
+        92,
+        225,
+        230
+       ]
+      ],
+      [
+       "Invisible Ink",
+       "bold",
+       40,
+       [
+        232,
+        236,
+        248
+       ]
+      ]
+     ]
+    },
+    {
+     "src": 12.3,
+     "dur": 3.2,
+     "x": "right",
+     "lines": [
+      [
+       "ACCESSIBLE",
+       "bold",
+       22,
+       [
+        92,
+        225,
+        230
+       ]
+      ],
+      [
+       "Every control works from the keyboard",
+       "bold",
+       32,
+       [
+        232,
+        236,
+        248
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s04",
+   "type": "clip",
+   "source": "level1",
+   "ranges": [
+    {
+     "in": 19.5,
+     "out": 23.4
+    },
+    {
+     "freeze": 23.4,
+     "dur": 3.0
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 19.5,
+     "src1": 23.4,
+     "x": 38,
+     "y": 60,
+     "w": 585,
+     "h": 485,
+     "max": 1.6
+    }
+   ],
+   "labels": [
+    {
+     "src": 19.6,
+     "dur": 4.0,
+     "x": "right",
+     "lines": [
+      [
+       "THE CATCH",
+       "bold",
+       22,
+       [
+        255,
+        176,
+        0
+       ]
+      ],
+      [
+       "A phase alone always gives 50/50",
+       "bold",
+       32,
+       [
+        232,
+        236,
+        248
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s05",
+   "type": "clip",
+   "source": "level1",
+   "ranges": [
+    {
+     "in": 30.3,
+     "out": 35.6
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 30.3,
+     "src1": 35.6,
+     "x": 38,
+     "y": 130,
+     "w": 585,
+     "h": 320,
+     "max": 1.8
+    }
+   ]
+  },
+  {
+   "id": "s06",
+   "type": "clip",
+   "source": "level1",
+   "ranges": [
+    {
+     "in": 35.6,
+     "out": 40.0
+    }
+   ],
+   "path": [
+    {
+     "src": 35.7,
+     "x": 0,
+     "y": 0,
+     "w": 1280,
+     "h": 720
+    },
+    {
+     "src": 36.4,
+     "x": 686,
+     "y": 250,
+     "w": 556,
+     "h": 330
+    },
+    {
+     "src": 38.6,
+     "x": 686,
+     "y": 250,
+     "w": 556,
+     "h": 330
+    },
+    {
+     "src": 39.3,
+     "x": 686,
+     "y": 0,
+     "w": 556,
+     "h": 495
+    }
+   ]
+  },
+  {
+   "id": "s07",
+   "type": "clip",
+   "source": "level1",
+   "ranges": [
+    {
+     "in": 40.0,
+     "out": 41.5
+    },
+    {
+     "freeze": 41.5,
+     "dur": 9.0
+    },
+    {
+     "in": 41.5,
+     "out": 42.3
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 41.0,
+     "src1": 42.3,
+     "x": 680,
+     "y": 90,
+     "w": 566,
+     "h": 410,
+     "max": 1.7
+    }
+   ],
+   "labels": [
+    {
+     "src": 41.5,
+     "dur": 4.0,
+     "x": 186,
+     "lines": [
+      [
+       "WHY? FOLLOW THE ARROWS",
+       "bold",
+       22,
+       [
+        92,
+        225,
+        230
+       ]
+      ],
+      [
+       "Quantum: add arrows, then square",
+       "bold",
+       32,
+       [
+        232,
+        236,
+        248
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s08",
+   "type": "clip",
+   "source": "level23",
+   "ranges": [
+    {
+     "in": 0.2,
+     "out": 1.0
+    },
+    {
+     "freeze": 1.0,
+     "dur": 3.0
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 0.2,
+     "src1": 1.0,
+     "x": 154,
+     "y": 360,
+     "w": 474,
+     "h": 220,
+     "max": 1.8
+    }
+   ],
+   "labels": [
+    {
+     "src": 0.25,
+     "dur": 3.6,
+     "x": "right",
+     "lines": [
+      [
+       "LEVEL 2",
+       "bold",
+       22,
+       [
+        92,
+        225,
+        230
+       ]
+      ],
+      [
+       "Dark Port",
+       "bold",
+       40,
+       [
+        232,
+        236,
+        248
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s09",
+   "type": "clip",
+   "source": "level23",
+   "ranges": [
+    {
+     "in": 11.7,
+     "out": 22.6
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 13.3,
+     "src1": 22.6,
+     "x": 650,
+     "y": 30,
+     "w": 500,
+     "h": 470,
+     "max": 1.7,
+     "ramp": 0.7
+    }
+   ]
+  },
+  {
+   "id": "s10",
+   "type": "clip",
+   "source": "level23",
+   "ranges": [
+    {
+     "in": 21.6,
+     "out": 22.2
+    },
+    {
+     "freeze": 22.2,
+     "dur": 4.0
+    },
+    {
+     "in": 23.8,
+     "out": 25.4
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 21.6,
+     "src1": 22.2,
+     "x": 679,
+     "y": 33,
+     "w": 450,
+     "h": 293,
+     "max": 1.9
+    },
+    {
+     "src0": 23.8,
+     "src1": 25.4,
+     "x": 679,
+     "y": 79,
+     "w": 450,
+     "h": 322,
+     "max": 1.8,
+     "ramp": 0.5
+    }
+   ]
+  },
+  {
+   "id": "s11",
+   "type": "clip",
+   "source": "level23",
+   "ranges": [
+    {
+     "in": 31.6,
+     "out": 32.4
+    },
+    {
+     "freeze": 32.4,
+     "dur": 3.5
+    },
+    {
+     "in": 39.4,
+     "out": 41.5
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 31.6,
+     "src1": 32.4,
+     "x": 154,
+     "y": 356,
+     "w": 474,
+     "h": 240,
+     "max": 1.9
+    },
+    {
+     "src0": 39.4,
+     "src1": 41.5,
+     "x": 154,
+     "y": 363,
+     "w": 474,
+     "h": 93,
+     "max": 2.0,
+     "ramp": 0.5
+    }
+   ],
+   "labels": [
+    {
+     "src": 31.7,
+     "dur": 3.8,
+     "x": "right",
+     "lines": [
+      [
+       "LEVEL 3",
+       "bold",
+       22,
+       [
+        92,
+        225,
+        230
+       ]
+      ],
+      [
+       "Which-Path Eraser",
+       "bold",
+       40,
+       [
+        232,
+        236,
+        248
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s12",
+   "type": "clip",
+   "source": "l3shot",
+   "width": 1100,
+   "scroll": [
+    {
+     "frac": 0.0,
+     "y": 40
+    },
+    {
+     "frac": 0.12,
+     "y": 40
+    },
+    {
+     "frac": 0.36,
+     "y": 560
+    },
+    {
+     "frac": 0.62,
+     "y": 880
+    },
+    {
+     "frac": 0.88,
+     "y": 1430
+    }
+   ],
+   "labels": [
+    {
+     "at": 0.2,
+     "dur": 3.5,
+     "x": "right",
+     "lines": [
+      [
+       "LEVEL 3 RESULT",
+       "bold",
+       22,
+       [
+        92,
+        225,
+        230
+       ]
+      ],
+      [
+       "Eraser on  ·  φ = 180°",
+       "bold",
+       34,
+       [
+        232,
+        236,
+        248
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s13",
+   "type": "clip",
+   "source": "levelpy",
+   "ranges": [
+    {
+     "in": 0.0,
+     "out": 1.8
+    },
+    {
+     "in": 10.6,
+     "out": 11.0
+    },
+    {
+     "freeze": 11.0,
+     "dur": 3.0
+    },
+    {
+     "in": 16.3,
+     "out": 18.6
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 0.0,
+     "src1": 1.8,
+     "x": 290,
+     "y": 150,
+     "w": 880,
+     "h": 400,
+     "max": 1.4
+    },
+    {
+     "src0": 10.6,
+     "src1": 11.0,
+     "x": 290,
+     "y": 295,
+     "w": 1130,
+     "h": 560,
+     "max": 1.3
+    },
+    {
+     "src0": 16.3,
+     "src1": 18.6,
+     "x": 380,
+     "y": 440,
+     "w": 1040,
+     "h": 340,
+     "max": 1.4
+    }
+   ],
+   "labels": [
+    {
+     "src": 0.1,
+     "dur": 3.4,
+     "x": "right",
+     "lines": [
+      [
+       "UNDER THE HOOD",
+       "bold",
+       22,
+       [
+        92,
+        225,
+        230
+       ]
+      ],
+      [
+       "phaseshift/levels.py",
+       "bold",
+       34,
+       [
+        232,
+        236,
+        248
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s14",
+   "type": "card",
+   "background": "arrows_clip",
+   "min": 7.0,
+   "text_at": 0.6,
+   "dim": 0.2,
+   "text": {
+    "y": 840,
+    "lines": [
+     {
+      "text": "Classical: square each arrow, then add",
+      "font": "bold",
+      "size": 42,
+      "gap": 18
+     },
+     {
+      "text": "Quantum: add the arrows, then square",
+      "font": "bold",
+      "size": 42,
+      "color": [
+       92,
+       225,
+       230
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "s15",
+   "type": "clip",
+   "source": "runapp",
+   "ranges": [
+    {
+     "in": 0.9,
+     "out": 1.2
+    },
+    {
+     "freeze": 1.2,
+     "dur": 6.0
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 1.0,
+     "src1": 1.2,
+     "x": 600,
+     "y": 555,
+     "w": 682,
+     "h": 285,
+     "max": 2.0,
+     "ramp": 0.8
+    }
+   ],
+   "blur": [
+    {
+     "src0": 0,
+     "src1": 5.5,
+     "x": 20,
+     "y": 76,
+     "w": 125,
+     "h": 54
+    },
+    {
+     "src0": 0,
+     "src1": 5.5,
+     "x": 1778,
+     "y": 2,
+     "w": 110,
+     "h": 58
+    }
+   ],
+   "labels": [
+    {
+     "src": 0.95,
+     "dur": 4.0,
+     "x": 186,
+     "lines": [
+      [
+       "IONQ ON QOLLAB",
+       "bold",
+       22,
+       [
+        92,
+        225,
+        230
+       ]
+      ],
+      [
+       "One single-circuit job per confirmation",
+       "bold",
+       32,
+       [
+        232,
+        236,
+        248
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s16",
+   "type": "clip",
+   "source": "readme",
+   "ranges": [
+    {
+     "in": 4.1,
+     "out": 4.9
+    },
+    {
+     "freeze": 6.0,
+     "dur": 2.5
+    },
+    {
+     "in": 12.0,
+     "out": 13.6
+    },
+    {
+     "in": 26.4,
+     "out": 27.6
+    },
+    {
+     "freeze": 27.8,
+     "dur": 1.2
+    },
+    {
+     "freeze": 28.0,
+     "dur": 3.5
+    }
+   ],
+   "zooms": [
+    {
+     "src0": 4.1,
+     "src1": 6.0,
+     "x": 212,
+     "y": 222,
+     "w": 843,
+     "h": 205,
+     "max": 1.5
+    },
+    {
+     "src0": 12.0,
+     "src1": 13.6,
+     "x": 190,
+     "y": 425,
+     "w": 865,
+     "h": 90,
+     "max": 1.5
+    },
+    {
+     "src0": 27.9,
+     "src1": 28.0,
+     "x": 238,
+     "y": 105,
+     "w": 817,
+     "h": 335,
+     "max": 1.5
+    }
+   ],
+   "labels": [
+    {
+     "src": 4.2,
+     "dur": 3.4,
+     "x": "right",
+     "lines": [
+      [
+       "OPEN SOURCE  ·  MIT",
+       "bold",
+       22,
+       [
+        92,
+        225,
+        230
+       ]
+      ],
+      [
+       "README + developer guide",
+       "bold",
+       34,
+       [
+        232,
+        236,
+        248
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s17",
+   "type": "card",
+   "background": "title_bg",
+   "min": 8.0,
+   "text_at": 0.5,
+   "fade_out": 1.2,
+   "text": {
+    "y": 600,
+    "lines": [
+     {
+      "text": "Phase Shift",
+      "font": "title",
+      "size": 130,
+      "gap": 24
+     },
+     {
+      "text": "Make the probabilities interfere.",
+      "font": "regular",
+      "size": 46,
+      "color": [
+       200,
+       208,
+       232
+      ],
+      "gap": 60
+     },
+     {
+      "text": "Play it on Qollab  ·  github.com/TPisco/quantum-interference-game",
+      "font": "bold",
+      "size": 32,
+      "color": [
+       92,
+       225,
+       230
+      ],
+      "gap": 20
+     },
+     {
+      "text": "MIT licensed  ·  This effort is supported by Qollab & IonQ",
+      "font": "regular",
+      "size": 30,
+      "color": [
+       200,
+       208,
+       232
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

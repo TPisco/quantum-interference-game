@@ -20,7 +20,7 @@ The Python package does all the quantum work and the game rules, and returns pla
 | `execution.py` | `local_backend()` (BasicSimulator), `aer_backend()`, `ionq_backend(noise_model=, token=)` (qiskit-ionq, `IONQ_API_KEY`), `get_backend(kind)`. `is_ionq()`, `backend_name()`. `compile_for(backend, qc)` (IonQ gate set or the backend's target, `optimization_level=0`, idle qubits dropped). `submit()` / `run_circuit()` (one circuit per job). `normalize_counts()`, `to_probabilities()`, `wilson_interval()`. |
 | `game.py` | `evaluate(level, config, probabilities, runs=, on_ionq=, seed=)` → `Feedback` (solved, value, stars, headline, detail, tone). Level-specific feedback writers in `_WRITERS`. Progress: `new_progress()`, `clean_progress()`, `record()`, `unlocked()`, `next_level()`. |
 | `api.py` | JS-facing functions, all returning `{"ok": True, ...}` or `{"ok": False, "error", "code"}` and never raising: `info()`, `backend_info(backend)`, `default_config(level)`, `progress_status(progress)`, `preview(level, config, seed)`, `run_level(backend, level, config, options)`. Holds the one-IonQ-job-per-backend-object guard. |
-| `__main__.py` | Command-line runner: `python -m phaseshift [--backend local|aer|ionq] [--level ... --phi ... --on ...]`. |
+| `__main__.py` | Command-line runner: `python -m phaseshift [--backend {local,aer,ionq}] [--level ... --phi ... --on ...]`. |
 
 ### `run_level` options and result
 
