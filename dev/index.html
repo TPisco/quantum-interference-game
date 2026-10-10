@@ -1,0 +1,32 @@
+<!doctype html>
+<!-- Local development page. Serve with: python dev/server.py, then open /dev/index.html.
+     It wraps the body-only ../index.html exactly as Qollab does, and maps the
+     Python module name "phaseshift.api" to a shim that talks to dev/server.py. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Phase Shift (local dev)</title>
+  <link rel="stylesheet" href="../main.css" />
+  <style>html, body { margin: 0; background: #0b1020; }</style>
+  <script type="importmap">
+    { "imports": { "phaseshift.api": "./py-shim.js" } }
+  </script>
+</head>
+<body>
+  <script type="module">
+    // Qollab creates the global `backend`; here it is a placeholder object the shim
+    // recognises, unless ?nobackend is in the URL (like a Run with no QPU selected).
+    const params = new URLSearchParams(location.search);
+    if (!params.has("nobackend")) {
+      const b = await (await fetch("/api/backend_info", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ args: ["__qollab_backend__"] }),
+      })).json();
+      if (b.available) globalThis.backend = { name: b.name };
+    }
+    document.body.innerHTML = await (await fetch("../index.html")).text();
+    await import("../main.js");
+  </script>
+</body>
+</html>

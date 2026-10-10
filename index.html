@@ -1,0 +1,127 @@
+<!--
+  BODY CONTENT ONLY. Qollab inserts this file inside its page body and drops
+  document-level tags and scripts: styles come from main.css, logic from main.js.
+  For local development open dev/index.html through dev/server.py (it wraps this
+  same file in a full page).
+-->
+<div class="ps" id="ps-app">
+  <a class="ps-skip" href="#ps-main">Skip to the game</a>
+
+  <header class="ps-header">
+    <div class="ps-hero" id="ps-hero" aria-hidden="true"></div>
+    <div class="ps-header__text">
+      <p class="ps-kicker">Qiskit · IonQ · Qollab</p>
+      <h1 class="ps-title">Phase Shift</h1>
+      <p class="ps-tagline">A quantum interference puzzle. Phases are invisible until the paths meet again.</p>
+      <p class="ps-backend" id="ps-backend" role="status">Loading Python and Qiskit…</p>
+    </div>
+  </header>
+
+  <details class="ps-howto" id="ps-howto">
+    <summary>How to play (1 minute read)</summary>
+    <div class="ps-howto__body">
+      <ol>
+        <li><strong>H</strong> (Hadamard) splits a qubit into two paths at once: the <em>upper path</em> |0⟩ and the <em>lower path</em> |1⟩.</li>
+        <li><strong>P(φ)</strong> (phase gate) rotates the lower path's <em>amplitude arrow</em> by φ. It never changes how long the arrow is.</li>
+        <li>A <strong>measurement</strong> picks an outcome with probability equal to the squared length of that outcome's arrow. Directions are invisible to it.</li>
+        <li><strong>Interference</strong>: when two paths lead to the same outcome, their arrows add head to tail first. Same direction: they reinforce. Opposite: they cancel.</li>
+      </ol>
+      <p>Change the gates, press <strong>Run</strong>, and read the histogram and the arrows. Practice runs use a Qiskit simulator inside your browser and are unlimited. When you are happy, <strong>confirm on IonQ</strong>: Qollab allows one IonQ job per Run, and a confirmed solution earns the IonQ star.</p>
+      <p>Keyboard: Tab moves between controls, arrow keys turn the phase dial, Space or Enter presses buttons.</p>
+    </div>
+  </details>
+
+  <nav class="ps-levels" aria-label="Levels">
+    <ol class="ps-levels__list" id="ps-level-list"></ol>
+  </nav>
+
+  <main class="ps-main" id="ps-main" tabindex="-1">
+    <section class="ps-panel ps-panel--build" aria-labelledby="ps-level-title">
+      <div class="ps-level-head">
+        <div class="ps-level-art" id="ps-level-art"></div>
+        <div>
+          <p class="ps-level-num" id="ps-level-num"></p>
+          <h2 class="ps-level-title" id="ps-level-title">Loading…</h2>
+          <p class="ps-chip" id="ps-level-concept"></p>
+        </div>
+      </div>
+      <p class="ps-story" id="ps-level-story"></p>
+      <p class="ps-goal"><span class="ps-goal__label">Goal</span> <span id="ps-goal-text"></span></p>
+
+      <h3 class="ps-h3">Your circuit</h3>
+      <div class="ps-circuit" id="ps-circuit" tabindex="0" aria-label="Circuit diagram (scrolls sideways on small screens)"></div>
+      <p class="ps-legend"><span class="ps-swatch ps-swatch--player" aria-hidden="true"></span> gates you control · <span class="ps-swatch ps-swatch--fixed" aria-hidden="true"></span> fixed by the level · <span class="ps-swatch ps-swatch--off" aria-hidden="true"></span> switched off</p>
+
+      <form class="ps-controls" id="ps-controls" aria-label="Circuit controls"></form>
+
+      <div class="ps-run">
+        <button type="button" class="ps-btn ps-btn--primary" id="ps-run-local">
+          <span aria-hidden="true">▶</span> Run (in-browser simulator)
+        </button>
+        <button type="button" class="ps-btn ps-btn--ionq" id="ps-run-backend" aria-describedby="ps-backend-note">
+          <span aria-hidden="true">⚛</span> <span id="ps-run-backend-label">Confirm on IonQ</span>
+        </button>
+        <button type="button" class="ps-btn ps-btn--ghost" id="ps-reset">
+          <span aria-hidden="true">↺</span> Reset level
+        </button>
+      </div>
+      <p class="ps-note" id="ps-backend-note"></p>
+      <div class="ps-shots">
+        <label for="ps-shots">Shots per run</label>
+        <select id="ps-shots">
+          <option value="250">250</option>
+          <option value="500">500</option>
+          <option value="1000" selected>1000</option>
+          <option value="2000">2000</option>
+        </select>
+        <span class="ps-note" id="ps-runs-used"></span>
+      </div>
+
+      <details class="ps-code">
+        <summary>Show this circuit as Qiskit code</summary>
+        <pre class="ps-pre" id="ps-qiskit-code" tabindex="0" aria-label="Qiskit code for your circuit"></pre>
+        <pre class="ps-pre" id="ps-circuit-text" tabindex="0" aria-label="Text drawing of your circuit"></pre>
+      </details>
+
+      <div class="ps-hints">
+        <button type="button" class="ps-btn ps-btn--ghost ps-btn--small" id="ps-hint-btn" aria-controls="ps-hint-list">Need a hint?</button>
+        <ol class="ps-hint-list" id="ps-hint-list" aria-live="polite"></ol>
+      </div>
+    </section>
+
+    <section class="ps-panel ps-panel--results" aria-labelledby="ps-results-title">
+      <h2 class="ps-h2" id="ps-results-title">Results</h2>
+      <p class="ps-status" id="ps-status" role="status" aria-live="polite">Ready. Change the circuit, then press Run.</p>
+
+      <div class="ps-feedback" id="ps-feedback" hidden tabindex="-1">
+        <p class="ps-feedback__stars" id="ps-feedback-stars"></p>
+        <h3 class="ps-feedback__headline" id="ps-feedback-headline"></h3>
+        <p class="ps-feedback__detail" id="ps-feedback-detail"></p>
+        <ul class="ps-feedback__reasons" id="ps-feedback-reasons"></ul>
+        <button type="button" class="ps-btn ps-btn--primary" id="ps-next" hidden>Next level <span aria-hidden="true">→</span></button>
+      </div>
+
+      <div class="ps-goalmeter" id="ps-goalmeter" hidden></div>
+
+      <div id="ps-histogram"></div>
+      <div id="ps-marginals"></div>
+
+      <div class="ps-arrows" id="ps-arrows-wrap" hidden>
+        <h3 class="ps-h3">Why? Follow the arrows</h3>
+        <p class="ps-note">Each path that reaches an outcome carries an amplitude arrow. Quantum rule: add the arrows, then square the length. Classical rule: square each arrow, then add. The difference is interference.</p>
+        <div id="ps-arrow-key"></div>
+        <div class="ps-arrows__grid" id="ps-arrows"></div>
+      </div>
+
+      <div class="ps-learn" id="ps-learn" hidden>
+        <h3 class="ps-h3">What you just learned</h3>
+        <p id="ps-learn-text"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ps-footer">
+    <p id="ps-attribution">This effort is supported by Qollab &amp; IonQ.</p>
+    <p>Phase Shift · MIT License · Built with Qiskit for the Qollab × IonQ Global Hackathon 2026. Artwork generated with Higgsfield.</p>
+  </footer>
+</div>

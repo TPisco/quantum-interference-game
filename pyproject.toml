@@ -1,0 +1,20 @@
+[project]
+name = "phase-shift"
+version = "1.0.0"
+description = "Phase Shift: a quantum interference puzzle game (Qollab x IonQ Hackathon 2026)"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "qiskit>=2.5.2,<3.0.0",  # same constraint as the Qollab runtime
+    "numpy",
+]
+
+[project.optional-dependencies]
+local = ["qiskit-aer", "qiskit-ionq"]
+dev = ["pytest", "qiskit-aer", "qiskit-ionq"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]

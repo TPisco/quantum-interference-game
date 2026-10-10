@@ -1,0 +1,97 @@
+{
+  "generator": "Higgsfield MCP (generate_image_batch)",
+  "model": "recraft_v4_1 (model_type: standard)",
+  "palette": [
+    "#0B1020",
+    "#141B34",
+    "#4EA8FF",
+    "#FFB000",
+    "#5CE1E6",
+    "#B48CFF",
+    "#E8ECF8"
+  ],
+  "generated_on": "2026-10-10",
+  "items": [
+    {
+      "key": "hero",
+      "file": "hero_banner.png",
+      "use": "web",
+      "job_id": "175abc8b-a0dc-457e-936b-bce206ede59f",
+      "aspect_ratio": "16:9",
+      "resolution": "2k",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261010_143942_175abc8b-a0dc-457e-936b-bce206ede59f.png",
+      "alt": "",
+      "prompt": "Minimalist flat vector illustration for a quantum physics puzzle game banner. A single glowing beam of light enters from the left, hits a small crystal beam splitter and splits into two smooth glowing paths, one blue and one orange, which curve apart like a lens shape and rejoin at a second crystal beam splitter on the right, where soft concentric interference ripples spread out. Tiny glowing nodes dot the paths. Deep navy background, playful but clean, lots of calm empty space in the left third, high contrast, no text, no letters, no numbers."
+    },
+    {
+      "key": "invisible-ink",
+      "file": "level1_invisible_ink.png",
+      "use": "web",
+      "job_id": "c14e4ad9-d4f2-4b7e-9ee7-f6514524ac6c",
+      "aspect_ratio": "1:1",
+      "resolution": "1k",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261010_143801_c14e4ad9-d4f2-4b7e-9ee7-f6514524ac6c.png",
+      "prompt": "Flat minimalist vector illustration, centered emblem: a glowing qubit sphere splits into two light paths, one blue and one orange; a translucent ghostly paintbrush paints a faint invisible swirl on the orange path, and the swirl only becomes visible as bright ripples where the two paths meet again. Clean geometric shapes, soft glow, dark navy background, no text, no letters, no numbers."
+    },
+    {
+      "key": "dark-port",
+      "file": "level2_dark_port.png",
+      "use": "web",
+      "job_id": "77b5db44-1e73-4071-9cf1-d41e3bf134ff",
+      "aspect_ratio": "1:1",
+      "resolution": "1k",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261010_143800_77b5db44-1e73-4071-9cf1-d41e3bf134ff.png",
+      "prompt": "Flat minimalist vector illustration, centered emblem of an optical interferometer seen from above: two light paths, blue and orange, form a diamond between two beam splitters; a mysterious violet crystal sample sits on the orange path; at the exit, one round detector glows bright white and the other detector is completely dark like a new moon. Clean geometric shapes, soft glow, dark navy background, no text, no letters, no numbers, no question marks."
+    },
+    {
+      "key": "eraser",
+      "file": "level3_eraser.png",
+      "use": "web",
+      "job_id": "f08bab57-c320-4a97-91ed-42f8d73eb9da",
+      "aspect_ratio": "1:1",
+      "resolution": "1k",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261010_143801_f08bab57-c320-4a97-91ed-42f8d73eb9da.png",
+      "prompt": "Flat minimalist vector illustration, centered emblem: two light paths, blue and orange, with a small watchful robotic eye detector peeking at them; a friendly rectangular eraser is wiping away the eye's dotted line of sight, and behind the eraser bright interference ripples reappear. Clean geometric shapes, soft glow, dark navy background, no text, no letters, no numbers."
+    },
+    {
+      "key": "video-title",
+      "file": "video_title_bg.png",
+      "use": "video",
+      "job_id": "3bf6ff00-58bb-49f2-9403-7f63f80f841b",
+      "aspect_ratio": "16:9",
+      "resolution": "2k",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261010_143801_3bf6ff00-58bb-49f2-9403-7f63f80f841b.png",
+      "prompt": "Cinematic minimal title card background for a short educational video about quantum interference: two sets of glowing circular ripples, one cyan-blue and one orange, overlap in the center creating a crisp interference fringe pattern of bright and dark bands, a small luminous qubit orb at the center, deep navy background, elegant and calm, large clean empty space in the lower half for a title, no text, no letters, no numbers."
+    },
+    {
+      "key": "video-arrows",
+      "file": "video_arrows_explainer.png",
+      "use": "video",
+      "job_id": "31b75364-e2ba-4787-8f80-07adc665dc8b",
+      "aspect_ratio": "16:9",
+      "resolution": "2k",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261010_143942_31b75364-e2ba-4787-8f80-07adc665dc8b.png",
+      "prompt": "Flat vector explainer graphic on a deep navy background: on the left, two arrows (one blue, one orange) point in the same direction and add head-to-tail into one long bright white arrow inside a thin circular dial; on the right, the same blue and orange arrows point in opposite directions and cancel to a tiny dot inside an identical dial. Clean educational diagram style, generous spacing, no text, no letters, no numbers, no symbols."
+    }
+  ],
+  "video_clips": [
+    {
+      "key": "title_card",
+      "file": "video/title_card.mp4",
+      "job_id": "22a0aaad-f1fd-473f-811d-ed501b8a5b8b",
+      "model": "kling3_0 (std, 5 s, sound off, 16:9)",
+      "start_image_job": "3bf6ff00-58bb-49f2-9403-7f63f80f841b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261010_145444_22a0aaad-f1fd-473f-811d-ed501b8a5b8b.mp4",
+      "prompt": "Slow gentle camera push-in on the glowing interference ripples; the cyan and orange ripple rings pulse softly outward and the bright and dark fringes shimmer; the qubit orb at the centre breathes with light. Calm, elegant, no text, no new objects."
+    },
+    {
+      "key": "arrows_explainer",
+      "file": "video/arrows_explainer.mp4",
+      "job_id": "7b490f88-644a-4d36-a287-a00fec3cce48",
+      "model": "kling3_0 (std, 5 s, sound off, 16:9)",
+      "start_image_job": "31b75364-e2ba-4787-8f80-07adc665dc8b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261010_145443_7b490f88-644a-4d36-a287-a00fec3cce48.mp4",
+      "prompt": "Subtle motion graphics: on the left dial the blue and orange arrows glide into line and the long white sum arrow grows; on the right dial the two arrows swing to face opposite directions and the sum shrinks to a small pulsing dot. Flat vector style, steady camera, no text, no new objects."
+    }
+  ]
+}

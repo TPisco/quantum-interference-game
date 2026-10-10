@@ -1,0 +1,6 @@
+# Local development and tests (not needed on Qollab, which provides Qiskit and the IonQ backend).
+-r requirements.txt
+qiskit-aer
+qiskit-ionq
+pytest
+pillow
