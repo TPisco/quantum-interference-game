@@ -104,7 +104,7 @@ def make_background(path: Path, art: str | None) -> None:
         img = img.resize((math.ceil(img.width * ratio), math.ceil(img.height * ratio)), Image.LANCZOS)
         left, top = (img.width - W) // 2, (img.height - H) // 2
         img = img.crop((left, top, left + W, top + H)).filter(ImageFilter.GaussianBlur(28))
-        img = Image.blend(img, Image.new("RGB", (W, H), NAVY), 0.72)
+        img = Image.blend(img, Image.new("RGB", (W, H), NAVY), 0.84)
     else:
         img = Image.new("RGB", (W, H), NAVY)
         d = ImageDraw.Draw(img)
