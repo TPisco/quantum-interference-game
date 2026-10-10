@@ -56,6 +56,21 @@ def normalize_config(level: Level, config: dict[str, Any] | None) -> dict[str, A
     return out
 
 
+def diffuser_gate() -> Gate:
+    """Grover's diffuser on two qubits, 2|s><s| - I, as one labelled gate.
+
+    H H, then Z Z and CZ (together diag(1, -1, -1, -1) = 2|00><00| - I), then H H.
+    Kept as a single instruction so the path sum treats it as one step (four
+    arrows per door instead of sixteen); transpilation unrolls it for backends.
+    """
+    sub = QuantumCircuit(2, name="diffuser")
+    sub.h([0, 1])
+    sub.z([0, 1])
+    sub.cz(0, 1)
+    sub.h([0, 1])
+    return sub.to_gate(label="Diffuser")
+
+
 def _angle_of(step, config: dict[str, Any], seed: int) -> float:
     if step.gate == "mystery":
         return float(mystery_phase(seed))
@@ -87,9 +102,16 @@ def build_circuit(
         if step.toggle and not cfg[step.toggle]:
             continue
         if step.gate == "h":
-            qc.h(step.qubits[0])
+            for q in step.qubits:
+                qc.h(q)
+        elif step.gate == "x":
+            qc.x(step.qubits[0])
         elif step.gate == "cx":
             qc.cx(step.qubits[0], step.qubits[1])
+        elif step.gate == "cp":
+            qc.cp(math.radians(_angle_of(step, cfg, seed)), step.qubits[0], step.qubits[1])
+        elif step.gate == "diffuser":
+            qc.append(diffuser_gate(), [step.qubits[0], step.qubits[1]])
         elif step.gate in ("p", "mystery"):
             if step.gate == "mystery" and hide_mystery:
                 qc.append(Gate("mystery", 1, [], label="θ ?"), [step.qubits[0]])
@@ -121,27 +143,44 @@ def angle_text(deg: float) -> str:
     return f"{deg:g}° ({pi_txt})"
 
 
+def _code_lines(step, cfg: dict[str, Any]) -> list[str]:
+    """Qiskit source lines for one step (the first line carries the comment)."""
+    q = step.qubits
+    if step.gate == "h":
+        target = str(q[0]) if len(q) == 1 else str(list(q))
+        return [f"qc.h({target})  # {step.label}"]
+    if step.gate == "x":
+        return [f"qc.x({q[0]})  # {step.label}"]
+    if step.gate == "cx":
+        return [f"qc.cx({q[0]}, {q[1]})  # {step.label}"]
+    if step.gate == "mystery":
+        return [f"qc.p(radians(theta), {q[0]})  # mystery sample (hidden)"]
+    if step.gate == "p":
+        return [f"qc.p(radians({cfg[step.angle]:g}), {q[0]})  # your phase φ"]
+    if step.gate == "cp":
+        return [f"qc.cp(radians({cfg[step.angle]:g}), {q[0]}, {q[1]})  # {step.label}"]
+    if step.gate == "diffuser":
+        pair = f"[{q[0]}, {q[1]}]"
+        return [f"qc.h({pair})  # {step.label}: H H, Z Z, CZ, H H",
+                f"qc.z({pair})", f"qc.cz({q[0]}, {q[1]})", f"qc.h({pair})"]
+    raise ConfigError(f"unsupported gate {step.gate}")  # pragma: no cover
+
+
 def qiskit_code(level: Level, config: dict[str, Any] | None = None) -> str:
     """Readable Qiskit source for the player's circuit (shown in the UI).
 
     The hidden phase of Dark Port is written as ``theta`` so it is not revealed.
+    Switched-off gates are shown commented out.
     """
     cfg = normalize_config(level, config)
     n = level.num_qubits
     lines = ["from math import radians", "from qiskit import QuantumCircuit", "",
              f"qc = QuantumCircuit({n}, {n})"]
     for step in level.steps:
+        body = _code_lines(step, cfg)
         if step.toggle and not cfg[step.toggle]:
-            lines.append(f"# qc.h({step.qubits[0]})  # {step.label}: off")
-            continue
-        if step.gate == "h":
-            lines.append(f"qc.h({step.qubits[0]})  # {step.label}")
-        elif step.gate == "cx":
-            lines.append(f"qc.cx({step.qubits[0]}, {step.qubits[1]})  # {step.label}")
-        elif step.gate == "mystery":
-            lines.append(f"qc.p(radians(theta), {step.qubits[0]})  # mystery sample (hidden)")
-        elif step.gate == "p":
-            lines.append(f"qc.p(radians({cfg[step.angle]:g}), {step.qubits[0]})  # your phase φ")
+            body = [f"# {body[0].split('  #')[0]}  # {step.label}: off"] + [f"# {x}" for x in body[1:]]
+        lines.extend(body)
     lines.append(f"qc.measure({list(range(n))}, {list(range(n))})")
     return "\n".join(lines)
 

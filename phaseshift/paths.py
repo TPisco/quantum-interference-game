@@ -14,7 +14,7 @@ invisible. Interference needs two or more arrows on the same outcome. That is
 the whole game in one sentence.
 
 The path enumeration multiplies gate matrix elements along computational-basis
-paths, so it is exact and cheap for the small circuits used here (<= 8 paths).
+paths, so it is exact and cheap for the small circuits used here (<= 16 paths).
 """
 
 from __future__ import annotations

@@ -20,6 +20,8 @@ SOLUTIONS = {
     "invisible-ink": lambda seed: {"phi": 180, "recombine": True},
     "dark-port": lambda seed: {"phi": (360 - mystery_phase(seed)) % 360},
     "eraser": lambda seed: {"phi": 180, "eraser": True},
+    "kickback": lambda seed: {"phi": 180, "flip": True},
+    "amplifier": lambda seed: {"phi": 180, "diffuser": True},
 }
 
 
@@ -75,7 +77,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     for level in LEVELS:
-        print(f"\n=== Level {level.number}: {level.title} — {level.concept}")
+        print(f"\n=== Level {level.number}: {level.title} ({level.concept})")
         print(f"Target: {level.target.description}")
         tries = [("first try (defaults)", level.default_config()),
                  ("solution", SOLUTIONS[level.id](args.seed))]

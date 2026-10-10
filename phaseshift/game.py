@@ -149,7 +149,65 @@ def _eraser(level, cfg, value, solved, phi, seed):
             f"phase to turn agreement into disagreement.", "far")
 
 
-_WRITERS = {"invisible-ink": _invisible_ink, "dark-port": _dark_port, "eraser": _eraser}
+def _kickback(level, cfg, value, solved, phi, seed):
+    if solved:
+        return ("Kicked back! You solved the level.",
+                f"Your X put the target in |1⟩. The controlled phase CP({angle_text(phi)}) only "
+                f"acts where both qubits are 1, and with the target sitting in |1⟩ that is exactly "
+                f"the control's lower path. So the phase landed on the control, the second H turned "
+                f"it into a bit, and the control read 1 in {_pct(value)} of the shots. The target "
+                f"was never changed: it read 1 every time.", "success")
+    if not cfg["flip"]:
+        return ("Your phase vanished.",
+                f"CP({angle_text(phi)}) only adds its phase where control AND target are 1. The "
+                f"target is still |0⟩, so the gate did nothing and the two H gates undid each other: "
+                f"the control read 1 in only {_pct(value)} of the shots. Flip the target to |1⟩ "
+                f"first: switch on the X.", "info")
+    if phi % 360 == 0:
+        return ("The target is ready, but there is no phase to kick.",
+                "With the target in |1⟩ the controlled phase now acts on the control, but φ = 0 "
+                "adds nothing, so the H gates still cancel and the control reads 0. Turn the dial.",
+                "far")
+    if value >= 0.5:
+        return ("You're close.",
+                f"The phase is reaching the control: it reads 1 in {_pct(value)} of the shots at "
+                f"φ = {angle_text(phi)}. Rotate further until the two arrows on control 0 cancel.",
+                "close")
+    return ("The kick is too weak.",
+            f"At φ = {angle_text(phi)} the control reads 1 only {_pct(value)} of the time. A larger "
+            f"phase turns the lower path's arrow further round. Which angle turns + into −?", "far")
+
+
+def _amplifier(level, cfg, value, solved, phi, seed):
+    if solved:
+        return ("Found it with one query! You solved the level.",
+                f"Your oracle turned the arrow of door |11⟩ by {angle_text(phi)} and the diffuser "
+                f"reflected every amplitude about the average. On |11⟩ the four path arrows lined "
+                f"up, on the other doors they cancelled in pairs: |11⟩ came up in {_pct(value)} of "
+                f"the shots. A classical search could need three looks.", "success")
+    if not cfg["diffuser"]:
+        return ("The mark is invisible.",
+                f"The oracle only changes the phase of door |11⟩. A measurement sees arrow lengths, "
+                f"not directions, so every door stays near 25% ({_pct(value)} for |11⟩) whatever φ "
+                f"you choose. Switch on the diffuser so the paths of all four doors interfere.",
+                "info")
+    if phi % 360 == 0:
+        return ("Nothing to amplify yet.",
+                "With φ = 0 no door is marked, so all four amplitudes equal the average and the "
+                "diffuser gives them back unchanged: 25% each. Mark the prize: turn the oracle phase.",
+                "far")
+    if value >= 0.5:
+        return ("You're close.",
+                f"The prize is getting louder: |11⟩ in {_pct(value)} of the shots at "
+                f"φ = {angle_text(phi)}. The further the marked arrow points away from the others, "
+                f"the more the diffuser can amplify it.", "close")
+    return ("Amplifying, but only a little.",
+            f"At φ = {angle_text(phi)} door |11⟩ comes up {_pct(value)} of the time. Rotate the "
+            f"oracle phase further so the marked arrow stands out from the average.", "far")
+
+
+_WRITERS = {"invisible-ink": _invisible_ink, "dark-port": _dark_port, "eraser": _eraser,
+            "kickback": _kickback, "amplifier": _amplifier}
 
 
 # --------------------------------------------------------------------------

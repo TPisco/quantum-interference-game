@@ -58,6 +58,38 @@ def test_eraser(phi):
     assert paths.marginal(on, 0, 2)["1"] == pytest.approx(0.5)
 
 
+@pytest.mark.parametrize("phi", ANGLES)
+def test_kickback(phi):
+    off = theory("kickback", {"phi": phi, "flip": False})["theory"]
+    on = theory("kickback", {"phi": phi, "flip": True})["theory"]
+    # Target in |0>: the controlled phase does nothing and H.H = I on the control.
+    assert off["00"] == pytest.approx(1.0)
+    # Target in |1>: the phase is kicked back onto the control...
+    assert on["01"] + on["11"] == pytest.approx(sin2(phi), abs=1e-9)
+    # ...and the target itself is never changed.
+    assert paths.marginal(on, 1, 2)["1"] == pytest.approx(1.0)
+
+
+@pytest.mark.parametrize("phi", ANGLES)
+def test_amplifier(phi):
+    off = theory("amplifier", {"phi": phi, "diffuser": False})
+    on = theory("amplifier", {"phi": phi, "diffuser": True})
+    assert all(v == pytest.approx(0.25) for v in off["theory"].values())
+    expected = (10 - 6 * math.cos(math.radians(phi))) / 16
+    assert on["theory"]["11"] == pytest.approx(expected, abs=1e-9)
+    for o in on["outcomes"]:
+        assert len(o["arrows"]) == 4  # every door is reached from all four doors
+        assert o["classical"] == pytest.approx(0.25)
+
+
+def test_amplifier_one_query_is_exact():
+    on = theory("amplifier", {"phi": 180, "diffuser": True})
+    assert on["theory"]["11"] == pytest.approx(1.0)
+    eleven = next(o for o in on["outcomes"] if o["key"] == "11")
+    # All four arrows point the same way (constructive), each of length 1/4.
+    assert all(a["re"] == pytest.approx(0.25) and a["im"] == pytest.approx(0.0) for a in eleven["arrows"])
+
+
 def test_mystery_seed_is_deterministic_and_varied():
     assert mystery_phase(123) == mystery_phase(123)
     assert len({mystery_phase(s) for s in range(200)}) > 10
@@ -82,12 +114,12 @@ def test_every_level_is_solvable_on_the_slider_grid(level):
     assert not game.evaluate(level, circuits.normalize_config(level, default), probs, seed=seed).solved
 
 
-@pytest.mark.parametrize("level", LEVELS, ids=lambda lvl: lvl.id)
-def test_toggles_off_mean_no_interference(level):
-    """Without its 'interference enabling' toggle no outcome has two arrows (L1, L3)."""
+@pytest.mark.parametrize("level_id", ["invisible-ink", "eraser", "amplifier"])
+def test_toggles_off_mean_no_interference(level_id):
+    """Without its 'interference enabling' toggle no outcome has two arrows (L1, L3, L5).
+    (Kickback's toggle is different: without it the phase is absent, see test_kickback.)"""
+    level = get_level(level_id)
     toggles = [c.id for c in level.controls if c.kind == "toggle"]
-    if not toggles:
-        pytest.skip("no toggle")
     t = theory(level.id, {"phi": 135.0, **{x: False for x in toggles}})
     assert all(o["interference"] == pytest.approx(0.0) for o in t["outcomes"])
 

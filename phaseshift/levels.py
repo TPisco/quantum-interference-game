@@ -13,7 +13,8 @@ Conventions
   qubit 0 (photon) = 0.
 * Every level starts with an H on qubit 0, which splits the qubit into two
   "paths": the *upper path* (qubit 0 = |0>) and the *lower path* (qubit 0 = |1>).
-  Phase gates act on the lower path only.
+  Phase gates act on the lower path only (Kickback and Amplifier use a
+  controlled phase, which acts only when both qubits are 1).
 
 To add a level, append a ``Level`` to ``LEVELS`` (see docs/DEVELOPER_GUIDE.md).
 """
@@ -50,8 +51,10 @@ class Control:
 class Step:
     """One gate on the wire.
 
-    gate:     "h", "p" (phase gate P(angle)), "cx" or "mystery" (hidden phase).
-    qubits:   target qubit(s); for "cx" (control, target).
+    gate:     "h" (on every listed qubit), "x", "p" (phase gate P(angle)),
+              "cp" (controlled phase), "cx", "mystery" (hidden phase) or
+              "diffuser" (Grover's reflection about the average, two qubits).
+    qubits:   target qubit(s); for "cx" and "cp" (control, target).
     angle:    id of the angle control for a player phase gate, or None.
     toggle:   id of a toggle control; the gate is present only when it is on.
     label:    descriptive name (used in code comments and screen-reader text).
@@ -115,6 +118,8 @@ class Level:
     learn: str
     par_runs: int
     outcome_names: dict[str, str] = field(default_factory=dict)
+    # Shown under the per-qubit table on multi-qubit levels; empty = no table.
+    marginal_note: str = ""
 
     def control(self, cid: str) -> Control:
         for c in self.controls:
@@ -208,7 +213,7 @@ DARK_PORT = Level(
     id="dark-port",
     number=2,
     title="Dark Port",
-    concept="Destructive interference as a phase detector",
+    concept="Interference as a phase detector",
     tagline="Cancel a mystery phase so detector |1⟩ goes dark.",
     story=(
         "A mystery sample sits on the lower path and adds an unknown phase θ. This is an "
@@ -251,7 +256,7 @@ ERASER = Level(
     id="eraser",
     number=3,
     title="Which-Path Eraser",
-    concept="Entanglement, which-path information and the quantum eraser",
+    concept="Entanglement and the quantum eraser",
     tagline="A detector spies on the paths. Erase what it knows.",
     story=(
         "Someone bolted a which-path detector onto your interferometer: a CNOT copies "
@@ -301,9 +306,133 @@ ERASER = Level(
         "10": "photon 0 · detector 1",
         "11": "photon 1 · detector 1",
     },
+    marginal_note=(
+        "Look at the photon alone: it stays near 50% whatever you do. Any interference "
+        "pattern can only show up in the joint outcomes above."
+    ),
 )
 
-LEVELS: tuple[Level, ...] = (INVISIBLE_INK, DARK_PORT, ERASER)
+# --------------------------------------------------------------------------
+# Level 4 - phase kickback: the phase shows up on the qubit it was not "on"
+# --------------------------------------------------------------------------
+KICKBACK = Level(
+    id="kickback",
+    number=4,
+    title="Kickback",
+    concept="Phase kickback",
+    tagline="Put a phase on the target. Watch the control react.",
+    story=(
+        "Two qubits now. The control goes through the same split and recombine as in level 1, "
+        "but your phase gate is a controlled phase CP(φ): it adds φ only when the control AND "
+        "the target are both 1. The target starts in |0⟩, and you may flip it to |1⟩ with an "
+        "X gate. Goal: make the control qubit read 1 at least 90% of the time."
+    ),
+    num_qubits=2,
+    qubit_names=("control", "target"),
+    steps=(
+        Step("h", (0,), "Split the control (H)", short="Split"),
+        Step("x", (1,), "Flip the target (X)", toggle="flip", short="Flip"),
+        Step("cp", (0, 1), "Controlled phase CP(φ)", angle="phi", short="C-phase"),
+        Step("h", (0,), "Recombine the control (H)", short="Recombine"),
+    ),
+    controls=(
+        Control(
+            id="phi", kind="angle", label="Controlled phase φ",
+            description="Added to the amplitude only when control and target are both 1.",
+            default=0.0,
+        ),
+        Control(
+            id="flip", kind="toggle", label="Flip the target to |1⟩ (X gate)",
+            description="An X gate on the target before the controlled phase.",
+            default=False,
+        ),
+    ),
+    target=Target(("01", "11"), ">=", 0.90,
+                  "Make the control qubit read 1 at least 90% of the time.",
+                  "P(control = 1) ≥ 90%"),
+    hints=(
+        "Set φ = 180° and run with the flip off. Did the control notice the phase?",
+        "A controlled phase only acts on the part of the state where BOTH qubits are 1. "
+        "With the target in |0⟩ there is no such part. Switch on the X so the target is |1⟩.",
+        "With the target in |1⟩, CP(φ) acts exactly like P(φ) on the control: "
+        "P(control = 1) = sin²(φ/2).",
+    ),
+    learn=(
+        "A controlled phase has no owner: diag(1, 1, 1, e^iφ) treats both qubits the same. "
+        "When the target sits in |1⟩, the phase factors out and lands on the control's lower "
+        "path, and the second H turns it into a measurable bit. The target never changes. "
+        "This phase kickback is how Deutsch-Jozsa, phase estimation and Shor's algorithm read "
+        "a hidden function: they put the answer into a phase, then let interference report it."
+    ),
+    par_runs=3,
+    outcome_names={
+        "00": "control 0 · target 0",
+        "01": "control 1 · target 0",
+        "10": "control 0 · target 1",
+        "11": "control 1 · target 1",
+    },
+    marginal_note=(
+        "Once you flip it, the target reads 1 every single time: the controlled phase never "
+        "changed it. All the action shows up on the control."
+    ),
+)
+
+# --------------------------------------------------------------------------
+# Level 5 - Grover search on two qubits: amplitude amplification
+# --------------------------------------------------------------------------
+AMPLIFIER = Level(
+    id="amplifier",
+    number=5,
+    title="Amplifier",
+    concept="Amplitude amplification (Grover search)",
+    tagline="Mark the prize with a phase, then make it loud.",
+    story=(
+        "Four doors, |00⟩ to |11⟩, and the prize is behind |11⟩. Two H gates open all four "
+        "at once, 25% each. An oracle can mark the prize door with a phase φ, and a diffuser "
+        "reflects every amplitude about the average. Goal: find the prize with one oracle "
+        "query, measuring |11⟩ at least 90% of the time."
+    ),
+    num_qubits=2,
+    qubit_names=("bit 0", "bit 1"),
+    steps=(
+        Step("h", (0, 1), "Spread over all four doors (H on both)", short="Spread"),
+        Step("cp", (0, 1), "Oracle: phase φ on door |11⟩", angle="phi", short="Oracle"),
+        Step("diffuser", (0, 1), "Diffuser (reflect about the average)", toggle="diffuser",
+             short="Diffuser"),
+    ),
+    controls=(
+        Control(
+            id="phi", kind="angle", label="Oracle phase φ on door |11⟩",
+            description="Rotates the arrow of the |11⟩ door only. 180° flips its sign.",
+            default=0.0,
+        ),
+        Control(
+            id="diffuser", kind="toggle", label="Diffuser (reflect about the average)",
+            description="Sends every door to every door, so four paths meet on each outcome.",
+            default=False,
+        ),
+    ),
+    target=Target(("11",), ">=", 0.90,
+                  "Find the prize: measure |11⟩ at least 90% of the time.",
+                  "P(|11⟩) ≥ 90%"),
+    hints=(
+        "Turn the oracle phase and run with the diffuser off. Do the doors change?",
+        "The oracle only rotates one arrow, and a measurement cannot see directions. Switch "
+        "on the diffuser so four paths land on every door and interfere.",
+        "With the diffuser on, P(|11⟩) = (10 − 6 cos φ)/16. It is largest when the marked "
+        "arrow points the opposite way to the others.",
+    ),
+    learn=(
+        "The diffuser replaces each amplitude by 2 × average − amplitude. Marking |11⟩ with "
+        "φ = 180° gives amplitudes (+½, +½, +½, −½) with average ¼, so the three empty doors "
+        "become 0 and the prize becomes 1. In arrow terms: on |11⟩ all four path arrows line "
+        "up, on every other door they cancel in pairs. With N doors Grover's search needs "
+        "about (π/4)√N oracle queries instead of about N/2."
+    ),
+    par_runs=3,
+)
+
+LEVELS: tuple[Level, ...] = (INVISIBLE_INK, DARK_PORT, ERASER, KICKBACK, AMPLIFIER)
 LEVELS_BY_ID: dict[str, Level] = {lvl.id: lvl for lvl in LEVELS}
 
 # Mystery phases for Dark Port: multiples of 15 deg, avoiding 0 and 180 (no sign puzzle).

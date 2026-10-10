@@ -178,15 +178,29 @@ def test_circuits_serialize_for_ionq_offline(level):
     assert set(compiled.count_ops()) <= set(execution.IONQ_BASIS) | {"measure"}
 
 
-def test_qiskit_code_runs_and_matches_circuit():
-    """The code shown to players is real Qiskit that builds the same circuit."""
-    level = get_level("eraser")
-    cfg = {"phi": 90, "eraser": True}
-    ns = {}
+@pytest.mark.parametrize("level", LEVELS, ids=lambda lvl: lvl.id)
+@pytest.mark.parametrize("toggles_on", [False, True])
+def test_qiskit_code_runs_and_matches_circuit(level, toggles_on):
+    """The code shown to players is real Qiskit that builds the same unitary."""
+    from qiskit.quantum_info import Operator
+
+    seed = 11
+    cfg = {"phi": 105, **{c.id: toggles_on for c in level.controls if c.kind == "toggle"}}
+    ns = {"theta": mystery_phase(seed)}
     exec(circuits.qiskit_code(level, cfg), ns)  # noqa: S102 - our own generated code
-    shown: QuantumCircuit = ns["qc"]
-    built = circuits.build_circuit(level, cfg)
-    assert shown.count_ops() == built.count_ops()
+    shown: QuantumCircuit = ns["qc"].remove_final_measurements(inplace=False)
+    built = circuits.build_circuit(level, cfg, seed=seed, measure=False)
+    assert Operator(shown).equiv(Operator(built))
+
+
+def test_marginals_only_where_they_teach_something():
+    r = api.run_level(None, "kickback", {"phi": 180, "flip": True}, {"where": "local", "sim_seed": 2})
+    assert r["ok"] and r["feedback"]["solved"]
+    target = next(m for m in r["marginals"] if m["name"] == "target")
+    assert target["measured"]["1"] == pytest.approx(1.0)
+    assert "never" in r["marginal_note"]
+    r = api.run_level(None, "amplifier", {"phi": 180, "diffuser": True}, {"where": "local"})
+    assert r["ok"] and r["marginals"] == [] and r["marginal_note"] is None
 
 
 # --------------------------------------------------------------------------
@@ -202,6 +216,9 @@ def test_progression_unlocks_in_order_and_keeps_best():
     p = game.record(p, "invisible-ink", 2, on_ionq=False)
     assert p["stars"]["invisible-ink"] == 3 and p["ionq"] == ["invisible-ink"]
     p = game.record(p, "dark-port", 2, on_ionq=False)
+    assert game.unlocked(p) == ["invisible-ink", "dark-port", "eraser"]
+    for lvl in LEVELS[2:-1]:
+        p = game.record(p, lvl.id, 1, on_ionq=False)
     assert game.unlocked(p) == [lvl.id for lvl in LEVELS]
     assert game.clean_progress({"stars": {"x": 5, "eraser": "9"}, "ionq": ["zz"]}) == {
         "stars": {"eraser": 3}, "ionq": []}

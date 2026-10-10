@@ -11,7 +11,11 @@ export const LEVEL_ALT = {
   "invisible-ink": "Illustration: a qubit splits into a blue and an orange path; a faint painted phase on the orange path only shows up as ripples where the paths meet again.",
   "dark-port": "Illustration: an interferometer with a violet mystery crystal on one path; one output detector glows, the other is completely dark.",
   "eraser": "Illustration: a small eye-shaped detector watches two light paths while an eraser wipes away its line of sight and interference ripples return.",
+  "kickback": "Illustration: an interferometer whose lower path is linked by a controlled gate to a second, straight target wire; a curved arrow shows the phase kicking back from the target onto the interferometer.",
+  "amplifier": "Illustration: four bars for four doors; three short bars and one tall cyan bar for the marked door, with a dashed line showing the average.",
 };
+
+const CYAN = "#5ce1e6";
 
 const BLUE = "#4ea8ff";
 const AMBER = "#ffb000";
@@ -41,43 +45,46 @@ const EMBLEMS = {
   <ellipse cx="60" cy="60" rx="13" ry="8" fill="none" stroke="${WHITE}" stroke-width="3"/>
   <circle cx="60" cy="60" r="3.5" fill="${WHITE}"/>
   <rect x="70" y="68" width="22" height="12" rx="3" fill="${VIOLET}" transform="rotate(-30 81 74)"/>`),
+  "kickback": `
+  <rect width="120" height="120" rx="18" fill="#141b34"/>
+  <circle cx="20" cy="46" r="6" fill="${WHITE}"/>
+  <circle cx="100" cy="46" r="6" fill="${WHITE}"/>
+  <path d="M20 46 L60 18 L100 46" fill="none" stroke="${BLUE}" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M20 46 L60 74 L100 46" fill="none" stroke="${AMBER}" stroke-width="5" stroke-dasharray="9 6" stroke-linejoin="round"/>
+  <path d="M14 100 H106" stroke="${WHITE}" stroke-width="4" stroke-linecap="round"/>
+  <path d="M60 74 V100" stroke="${CYAN}" stroke-width="4"/>
+  <circle cx="60" cy="74" r="6" fill="${CYAN}"/>
+  <circle cx="60" cy="100" r="6" fill="${CYAN}"/>
+  <path d="M78 98 C 92 92, 92 78, 80 70" fill="none" stroke="${CYAN}" stroke-width="3" stroke-linecap="round"/>
+  <path d="M80 70 l9 1 l-6 7 z" fill="${CYAN}"/>`,
+  "amplifier": `
+  <rect width="120" height="120" rx="18" fill="#141b34"/>
+  <path d="M14 100 H106" stroke="${WHITE}" stroke-opacity="0.5" stroke-width="2"/>
+  <rect x="20" y="82" width="16" height="18" rx="3" fill="${BLUE}"/>
+  <rect x="42" y="82" width="16" height="18" rx="3" fill="${BLUE}"/>
+  <rect x="64" y="82" width="16" height="18" rx="3" fill="${BLUE}"/>
+  <rect x="86" y="22" width="16" height="78" rx="3" fill="${CYAN}"/>
+  <path d="M14 76 H106" stroke="${AMBER}" stroke-width="3" stroke-dasharray="7 5"/>
+  <path d="M94 12 l4 -6 l4 6" fill="none" stroke="${WHITE}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`,
 };
 
-/** An <img> (generated art) or an inline SVG emblem, with a text alternative. */
-export function levelArt(levelId) {
+/** An <img> (generated art) or an inline SVG emblem, with a text alternative.
+ *  decorative: true when the surrounding control already names the level
+ *  (the level list), so screen readers do not hear the illustration twice. */
+export function levelArt(levelId, { decorative = false, size = 96 } = {}) {
   const src = ART_DATA.levels?.[levelId];
-  const alt = LEVEL_ALT[levelId] ?? "";
+  const alt = decorative ? "" : LEVEL_ALT[levelId] ?? "";
   if (src) {
     const img = document.createElement("img");
     img.src = src;
     img.alt = alt;
-    img.width = 96;
-    img.height = 96;
+    img.width = size;
+    img.height = size;
     img.decoding = "async";
     return img;
   }
   const wrap = document.createElement("span");
-  wrap.innerHTML = `<svg viewBox="0 0 120 120" width="96" height="96" role="img" aria-label="${alt.replace(/"/g, "&quot;")}">${EMBLEMS[levelId] ?? diamond("")}</svg>`;
+  const a11y = decorative ? 'aria-hidden="true" focusable="false"' : `role="img" aria-label="${alt.replace(/"/g, "&quot;")}"`;
+  wrap.innerHTML = `<svg viewBox="0 0 120 120" width="${size}" height="${size}" ${a11y}>${EMBLEMS[levelId] ?? diamond("")}</svg>`;
   return wrap.firstElementChild;
-}
-
-const HERO_FALLBACK = `url("data:image/svg+xml,${encodeURIComponent(`
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300' preserveAspectRatio='xMaxYMid slice'>
-  <rect width='1200' height='300' fill='#0b1020'/>
-  <g fill='none' stroke-width='5' stroke-linecap='round'>
-    <path d='M560 150 C 700 30, 860 30, 1000 150' stroke='${BLUE}'/>
-    <path d='M560 150 C 700 270, 860 270, 1000 150' stroke='${AMBER}' stroke-dasharray='16 10'/>
-    <path d='M380 150 L560 150' stroke='${WHITE}'/>
-  </g>
-  <g fill='none' stroke='${WHITE}' stroke-opacity='0.35' stroke-width='3'>
-    <circle cx='1000' cy='150' r='30'/><circle cx='1000' cy='150' r='60'/>
-    <circle cx='1000' cy='150' r='95' stroke-opacity='0.2'/><circle cx='1000' cy='150' r='135' stroke-opacity='0.1'/>
-  </g>
-  <rect x='545' y='135' width='30' height='30' fill='#5ce1e6' transform='rotate(45 560 150)'/>
-  <rect x='985' y='135' width='30' height='30' fill='#5ce1e6' transform='rotate(45 1000 150)'/>
-</svg>`)}")`;
-
-/** Decorative header background (the element is aria-hidden). */
-export function applyHero(node) {
-  node.style.backgroundImage = ART_DATA.hero ? `url("${ART_DATA.hero}")` : HERO_FALLBACK;
 }

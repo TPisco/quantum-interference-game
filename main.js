@@ -4,6 +4,8 @@
   - `import * as api from "phaseshift.api"` must stay STATIC: it is the form
     Qollab resolves to the Python module phaseshift/api.py (run by Pyodide).
     Locally, dev/index.html maps the name to dev/py-shim.js instead.
+  - Two views in one document: the start page (level list, live demo, rules)
+    and the puzzle workspace. Switching never touches the URL.
   - Practice runs go to an in-browser Qiskit simulator (where: "local").
     "Confirm on IonQ" sends one job to the backend chosen in Qollab's
     "Select QPU" dialog (where: "backend"). Qollab allows one IonQ job per Run.
@@ -14,17 +16,29 @@
 import * as api from "phaseshift.api";
 import { createBridge } from "./web/bridge.js";
 import { loadState, saveState, newSeed } from "./web/store.js";
-import { applyHero, levelArt } from "./web/art.js";
+import { levelArt } from "./web/art.js";
+import { icon, hydrateIcons } from "./web/icons.js";
+import { mountDemo } from "./web/demo.js";
 import {
-  el, angleText, pct, starsText, circuitSVG, histogramTable, goalMeter,
-  marginalsTable, arrowCard, arrowKey, arrowReach,
+  el, angleText, pct, circuitSVG, histogramTable, goalMeter,
+  marginalsTable, arrowCard, arrowKey, arrowReach, phaseClock,
 } from "./web/render.js";
 
 const $ = (id) => document.getElementById(id);
 const els = {
-  hero: $("ps-hero"),
+  app: $("ps-app"),
+  back: $("ps-back"),
   backend: $("ps-backend"),
+  viewStart: $("ps-view-start"),
+  viewPlay: $("ps-view-play"),
+  startTitle: $("ps-start-title"),
+  start: $("ps-start"),
+  startLabel: $("ps-start-label"),
+  howtoBtn: $("ps-howto-btn"),
+  rules: $("ps-rules"),
+  demo: $("ps-demo"),
   levelList: $("ps-level-list"),
+  stepper: $("ps-stepper"),
   levelArt: $("ps-level-art"),
   levelNum: $("ps-level-num"),
   levelTitle: $("ps-level-title"),
@@ -33,6 +47,9 @@ const els = {
   goalText: $("ps-goal-text"),
   circuit: $("ps-circuit"),
   controls: $("ps-controls"),
+  runLast: $("ps-run-last"),
+  runLastText: $("ps-run-last-text"),
+  runLastJump: $("ps-run-last-jump"),
   runLocal: $("ps-run-local"),
   runBackend: $("ps-run-backend"),
   runBackendLabel: $("ps-run-backend-label"),
@@ -43,14 +60,17 @@ const els = {
   code: $("ps-qiskit-code"),
   circuitText: $("ps-circuit-text"),
   hintBtn: $("ps-hint-btn"),
+  hintLabel: $("ps-hint-label"),
   hintList: $("ps-hint-list"),
   status: $("ps-status"),
+  empty: $("ps-empty"),
   feedback: $("ps-feedback"),
   fbStars: $("ps-feedback-stars"),
   fbHeadline: $("ps-feedback-headline"),
   fbDetail: $("ps-feedback-detail"),
   fbReasons: $("ps-feedback-reasons"),
   next: $("ps-next"),
+  nextLabel: $("ps-next-label"),
   goalmeter: $("ps-goalmeter"),
   histogram: $("ps-histogram"),
   marginals: $("ps-marginals"),
@@ -62,8 +82,8 @@ const els = {
   attribution: $("ps-attribution"),
 };
 
+const reduceMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 const bridge = createBridge(api);
-let INFO = null;
 let LEVELS = {};
 let ORDER = [];
 let unlocked = [];
@@ -97,7 +117,8 @@ function setStatus(text, kind = "ready") {
 }
 
 function setBusy(busy) {
-  for (const b of [els.runLocal, els.reset, ...els.levelList.querySelectorAll("button")]) {
+  const navButtons = [...els.levelList.querySelectorAll("button"), ...els.stepper.querySelectorAll("button")];
+  for (const b of [els.runLocal, els.reset, ...navButtons]) {
     b.disabled = busy || (b.dataset.locked === "true");
   }
   for (const input of els.controls.querySelectorAll("input, button")) input.disabled = busy;
@@ -109,61 +130,135 @@ function backendUsable() {
   return backendState.available && !(backendState.is_ionq && backendState.ionq_job_used);
 }
 
+function starsEl(n, size = 16) {
+  const s = Math.max(0, Math.min(3, Number(n) || 0));
+  const wrap = el("span", { class: "ps-stars" });
+  for (let i = 0; i < 3; i++) wrap.append(icon(i < s ? "starFill" : "star", size, i < s ? "" : "ps-star-off"));
+  wrap.append(el("span", { class: "ps-sr", text: `${s} of 3 stars` }));
+  return wrap;
+}
+
+// ------------------------------------------------------------------- views
+
+function showView(view, { focus = true, instant = false } = {}) {
+  const play = view === "play";
+  els.app.dataset.view = view;
+  for (const [name, node] of [["start", els.viewStart], ["play", els.viewPlay]]) {
+    // Keyboard-initiated switches appear instantly; pointer ones get a short fade.
+    if (instant || reduceMotion) node.setAttribute("data-instant", "");
+    else node.removeAttribute("data-instant");
+    node.hidden = name !== view;
+  }
+  els.back.hidden = !play;
+  if (play) renderCircuit();
+  if (els.app.getBoundingClientRect().top < 0) els.app.scrollIntoView({ block: "start" });
+  if (!focus) return;
+  if (play) {
+    els.levelTitle.focus({ preventScroll: true });
+  } else {
+    const row = level && els.levelList.querySelector(`[data-level="${level.id}"]:not([disabled])`);
+    (row ?? els.startTitle).focus({ preventScroll: true });
+  }
+}
+
+function continueTarget() {
+  if (unlocked.includes(state.current)) return state.current;
+  const unsolved = ORDER.find((id) => unlocked.includes(id) && !(state.progress.stars?.[id] > 0));
+  return unsolved ?? ORDER[0];
+}
+
+function renderStartCta() {
+  const id = continueTarget();
+  const l = LEVELS[id];
+  const fresh = !Object.keys(state.progress.stars ?? {}).length && !state.attempts[id]?.runs;
+  els.startLabel.textContent = fresh ? `Start level ${l.number}` : `Continue level ${l.number}`;
+  els.start.dataset.target = id;
+}
+
 // ---------------------------------------------------------------- backend UI
 
 function renderBackend() {
   const b = backendState;
+  const short = (lead, tail) => [el("span", { class: "ps-hide-sm", text: lead }), tail];
   if (!b.available) {
     els.backend.textContent = "Practice mode: no quantum backend selected";
-    els.runBackendLabel.textContent = "Confirm on IonQ";
+    els.runBackendLabel.replaceChildren(...short("Confirm on ", "IonQ"));
     els.backendNote.textContent = "To confirm a solution on IonQ, press Run on Qollab and choose IonQ's simulator in “Select QPU”. Practice runs work without it.";
   } else if (b.is_ionq) {
-    els.backend.textContent = `Quantum backend: ${b.name} (IonQ)`;
+    els.backend.textContent = `Backend: ${b.name} (IonQ)`;
     if (b.ionq_job_used) {
-      els.runBackendLabel.textContent = "IonQ job used for this Run";
+      els.runBackendLabel.replaceChildren(...short("IonQ ", "job used"));
       els.backendNote.textContent = "Qollab allows one IonQ job per Run. Press Stop, then Run, to send another. Your circuit and progress are saved in this browser.";
     } else {
-      els.runBackendLabel.textContent = "Confirm on IonQ (1 job per Run)";
-      els.backendNote.textContent = `Sends this exact circuit to ${b.name} as one job. It takes a few seconds; Qollab allows one IonQ job per Run, so practise first.`;
+      els.runBackendLabel.replaceChildren(...short("Confirm on ", "IonQ"));
+      els.backendNote.textContent = `Sends this exact circuit to ${b.name} as one job. It takes a few seconds, and Qollab allows one IonQ job per Run, so practise first.`;
     }
   } else {
-    els.backend.textContent = `Quantum backend: ${b.name}`;
-    els.runBackendLabel.textContent = `Run on ${b.name}`;
-    els.backendNote.textContent = "Runs on the backend selected in Qollab. Choose IonQ's simulator in “Select QPU” to earn the IonQ star.";
+    els.backend.textContent = `Backend: ${b.name}`;
+    els.runBackendLabel.replaceChildren(...short("Run on ", "QPU"));
+    els.backendNote.textContent = `Runs on ${b.name}, the backend selected in Qollab. Choose IonQ's simulator in “Select QPU” to earn the IonQ star.`;
   }
   els.runBackend.disabled = bridge.busy || !backendUsable();
 }
 
 // ------------------------------------------------------------------ levels
 
-function renderLevelList() {
-  els.levelList.replaceChildren();
-  for (const id of ORDER) {
+function renderLevelRows() {
+  els.levelList.removeAttribute("aria-busy");
+  els.levelList.replaceChildren(...ORDER.map((id) => {
     const l = LEVELS[id];
     const open = unlocked.includes(id);
     const stars = state.progress.stars?.[id] ?? 0;
     const ionq = (state.progress.ionq ?? []).includes(id);
-    const meta = open
-      ? `${l.concept}`
-      : `Locked: solve level ${l.number - 1} first`;
     const btn = el("button", {
-      type: "button",
-      class: "ps-level-btn",
-      "aria-current": level?.id === id ? "step" : null,
-      "data-locked": String(!open),
-      disabled: !open,
+      type: "button", class: "ps-level-row", "data-level": id, "data-locked": String(!open), disabled: !open,
     },
-    el("span", { class: "ps-level-btn__num", "aria-hidden": "true", text: open ? String(l.number) : "🔒" }),
+    el("span", { class: "ps-level-row__art" }, levelArt(id, { decorative: true, size: 64 })),
     el("span", {},
-      el("span", { class: "ps-level-btn__title" }, `Level ${l.number}: ${l.title}`),
-      el("span", { class: "ps-level-btn__meta" }, meta),
-      el("span", { class: "ps-level-btn__meta" },
-        el("span", { class: "ps-stars", "aria-hidden": "true", text: starsText(stars) }),
-        el("span", { class: "ps-sr", text: `${stars} of 3 stars` }),
-        ionq ? " · IonQ confirmed" : "")));
+      el("span", { class: "ps-level-row__num", text: `Level ${l.number}` }),
+      el("span", { class: "ps-level-row__title", text: l.title }),
+      el("span", { class: "ps-level-row__concept", text: open ? l.concept : `Solve level ${l.number - 1} to unlock` })),
+    el("span", { class: "ps-level-row__side" },
+      el("span", {}, starsEl(stars), ionq ? el("span", { class: "ps-ionq-tag", text: " IonQ" }) : null),
+      el("span", { class: "ps-level-row__go" },
+        open ? [stars ? "Play again" : "Play", icon("arrowRight", 16)] : [icon("lock", 16), "Locked"])));
+    btn.addEventListener("click", (e) => {
+      selectLevel(id);
+      showView("play", { instant: e.detail === 0 });
+    });
+    return el("li", {}, btn);
+  }));
+}
+
+function renderStepper() {
+  els.stepper.replaceChildren(...ORDER.map((id) => {
+    const l = LEVELS[id];
+    const open = unlocked.includes(id);
+    const stars = state.progress.stars?.[id] ?? 0;
+    const btn = el("button", {
+      type: "button", class: "ps-lvl-pill", "data-level": id, "data-locked": String(!open), disabled: !open,
+      "aria-current": level?.id === id ? "step" : null,
+    },
+    el("span", { class: "ps-lvl-pill__num", "aria-hidden": "true" }, open ? String(l.number) : icon("lock", 14)),
+    el("span", { class: "ps-sr", text: `Level ${l.number}: ` }),
+    el("span", { text: l.title }),
+    open ? (stars ? starsEl(stars, 12) : null) : el("span", { class: "ps-sr", text: ", locked" }));
     btn.addEventListener("click", () => selectLevel(id, { focus: true }));
-    els.levelList.append(el("li", {}, btn));
+    return el("li", {}, btn);
+  }));
+  // Keep the current pill in view horizontally (never scroll the page vertically).
+  const cur = els.stepper.querySelector('[aria-current="step"]');
+  if (cur && els.stepper.scrollWidth > els.stepper.clientWidth) {
+    const box = els.stepper.getBoundingClientRect();
+    const r = cur.getBoundingClientRect();
+    els.stepper.scrollLeft += r.left - box.left - (box.width - r.width) / 2;
   }
+}
+
+function renderNav() {
+  renderLevelRows();
+  renderStepper();
+  renderStartCta();
 }
 
 function renderControls() {
@@ -173,27 +268,36 @@ function renderControls() {
     const id = `ps-ctl-${c.id}`;
     if (c.kind === "angle") {
       const input = el("input", {
-        type: "range", id, min: c.min, max: c.max, step: c.step, value: a.config[c.id],
+        type: "range", id, class: "ps-range", min: c.min, max: c.max, step: c.step, value: a.config[c.id],
         "aria-describedby": `${id}-desc`, "aria-valuetext": angleText(a.config[c.id]),
       });
-      const out = el("output", { for: id, id: `${id}-out`, text: angleText(a.config[c.id]) });
+      const out = el("output", { for: id, id: `${id}-out`, class: "ps-readout__value" });
+      const clock = el("span", { class: "ps-readout__clock" });
+      const show = (val) => {
+        input.value = String(Math.min(val, c.max));
+        input.setAttribute("aria-valuetext", angleText(val));
+        input.style.setProperty("--fill", `${(100 * Math.min(val, c.max)) / c.max}%`);
+        out.textContent = angleText(val);
+        clock.replaceChildren(phaseClock(val));
+      };
       const set = (v) => {
         const val = ((Math.round(v / c.step) * c.step) % 360 + 360) % 360;
         a.config[c.id] = val;
-        input.value = String(Math.min(val, c.max));
-        input.setAttribute("aria-valuetext", angleText(val));
-        out.textContent = angleText(val);
+        show(val);
         onConfigChange();
       };
+      show(a.config[c.id]);
       input.addEventListener("input", () => set(Number(input.value)));
       const minus = el("button", { type: "button", class: "ps-step", "aria-label": `Decrease ${c.label} by ${c.step}°`, text: "−" });
       const plus = el("button", { type: "button", class: "ps-step", "aria-label": `Increase ${c.label} by ${c.step}°`, text: "+" });
       minus.addEventListener("click", () => set(a.config[c.id] - c.step));
       plus.addEventListener("click", () => set(a.config[c.id] + c.step));
       els.controls.append(el("div", { class: "ps-control" },
-        el("label", { class: "ps-control__label", for: id, text: c.label }),
+        el("div", { class: "ps-control__head" },
+          el("label", { class: "ps-control__label", for: id, text: c.label }),
+          el("span", { class: "ps-readout" }, clock, out)),
         el("span", { class: "ps-control__desc", id: `${id}-desc`, text: c.description }),
-        el("div", { class: "ps-dial" }, minus, input, plus, out)));
+        el("div", { class: "ps-dial" }, minus, input, plus)));
     } else if (c.kind === "toggle") {
       const input = el("input", { type: "checkbox", role: "switch", id, "aria-describedby": `${id}-desc` });
       input.checked = Boolean(a.config[c.id]);
@@ -218,8 +322,13 @@ function onConfigChange() {
   previewTimer = setTimeout(renderCode, 120);
 }
 
+const COMPACT_BELOW = 520;
 function renderCircuit() {
-  els.circuit.replaceChildren(circuitSVG(level, attempt().config));
+  if (!level) return;
+  const w = els.circuit.clientWidth;
+  const compact = w > 0 && w < COMPACT_BELOW;
+  els.circuit.dataset.compact = String(compact);
+  els.circuit.replaceChildren(circuitSVG(level, attempt().config, { compact }));
 }
 
 async function renderCode() {
@@ -234,14 +343,14 @@ async function renderCode() {
 
 function renderRunsUsed() {
   const a = attempt();
-  els.runsUsed.textContent = `Runs this attempt: ${a.runs} (par ${level.par_runs})`;
+  els.runsUsed.textContent = `Runs: ${a.runs} (par ${level.par_runs})`;
 }
 
 function resetHints() {
   hintsShown = 0;
   els.hintList.replaceChildren();
   els.hintBtn.disabled = false;
-  els.hintBtn.textContent = "Need a hint?";
+  els.hintLabel.textContent = "Need a hint?";
 }
 
 function showHint() {
@@ -249,14 +358,15 @@ function showHint() {
   els.hintList.append(el("li", { text: level.hints[hintsShown] }));
   hintsShown += 1;
   if (hintsShown >= level.hints.length) {
-    els.hintBtn.textContent = "No more hints";
+    els.hintLabel.textContent = "No more hints";
     els.hintBtn.disabled = true;
   } else {
-    els.hintBtn.textContent = `Another hint (${hintsShown + 1} of ${level.hints.length})`;
+    els.hintLabel.textContent = `Another hint (${hintsShown + 1} of ${level.hints.length})`;
   }
 }
 
 function clearResults() {
+  els.empty.hidden = false;
   els.feedback.hidden = true;
   els.goalmeter.hidden = true;
   els.histogram.replaceChildren();
@@ -265,6 +375,7 @@ function clearResults() {
   els.arrowKey.replaceChildren();
   els.arrows.replaceChildren();
   els.learn.hidden = true;
+  els.runLast.hidden = true;
   setStatus("Ready. Change the circuit, then press Run.");
 }
 
@@ -273,13 +384,13 @@ function selectLevel(id, { focus = false } = {}) {
   level = LEVELS[id];
   attempt();
   save();
-  els.levelArt.replaceChildren(levelArt(id));
+  els.levelArt.replaceChildren(levelArt(id, { size: 88 }));
   els.levelNum.textContent = `Level ${level.number} of ${ORDER.length}`;
   els.levelTitle.textContent = level.title;
   els.levelConcept.textContent = level.concept;
   els.levelStory.textContent = level.story;
   els.goalText.textContent = level.target.description;
-  renderLevelList();
+  renderNav();
   renderControls();
   renderCircuit();
   renderCode();
@@ -287,29 +398,28 @@ function selectLevel(id, { focus = false } = {}) {
   resetHints();
   if (lastResults[id]) renderResult(lastResults[id], { announce: false });
   else clearResults();
-  if (focus) {
-    els.levelTitle.setAttribute("tabindex", "-1");
-    els.levelTitle.focus();
-  }
+  if (focus) els.levelTitle.focus();
 }
 
 // ------------------------------------------------------------------ results
 
 function renderResult(res, { announce = true } = {}) {
   const fb = res.feedback;
+  els.empty.hidden = true;
   els.feedback.hidden = false;
   els.feedback.dataset.tone = fb.tone;
-  els.fbStars.replaceChildren(
-    el("span", { "aria-hidden": "true", text: fb.solved ? starsText(fb.stars) : "" }),
-    el("span", { class: "ps-sr", text: fb.solved ? `${fb.stars} of 3 stars.` : "" }));
+  els.fbStars.replaceChildren(...(fb.solved ? [starsEl(fb.stars, 22)] : []));
   els.fbHeadline.textContent = fb.headline;
   els.fbDetail.textContent = fb.detail;
-  els.fbReasons.replaceChildren(...(fb.star_reasons ?? []).map((r) => el("li", { text: `★ ${r}` })));
+  els.fbReasons.replaceChildren(...(fb.star_reasons ?? []).map((r) => el("li", {}, icon("starFill", 14), r)));
   if (fb.solved && !res.source.is_ionq && backendState.is_ionq && !backendState.ionq_job_used) {
-    els.fbReasons.append(el("li", { text: "☆ Confirm this circuit on IonQ to earn the IonQ star." }));
+    els.fbReasons.append(el("li", {}, icon("star", 14), "Confirm this circuit on IonQ to earn the IonQ star."));
   }
-  els.next.hidden = !(fb.solved && res.next_level && unlocked.includes(res.next_level));
-  els.next.dataset.target = res.next_level ?? "";
+  const nextOpen = fb.solved && res.next_level && unlocked.includes(res.next_level);
+  const finished = fb.solved && !res.next_level;
+  els.next.hidden = !(nextOpen || finished);
+  els.next.dataset.target = nextOpen ? res.next_level : finished ? "__start__" : "";
+  els.nextLabel.textContent = nextOpen ? `Next: ${LEVELS[res.next_level].title}` : "All puzzles";
 
   els.goalmeter.hidden = false;
   els.goalmeter.replaceChildren(goalMeter(res));
@@ -330,9 +440,15 @@ function renderResult(res, { announce = true } = {}) {
   els.learn.hidden = !res.learn;
   els.learnText.textContent = res.learn ?? "";
 
+  // "P(|1⟩) ≥ 90%" -> measure "P(|1⟩)", goal "≥ 90%".
+  const [measure, goal = ""] = res.target.short.split(/ (?=[≥≤])/);
+  els.runLast.hidden = false;
+  els.runLast.dataset.met = String(fb.solved);
+  els.runLastText.textContent = `Last run: ${measure} = ${pct(res.target.value, 1)}, ${fb.solved ? "goal met" : `goal ${goal}`}`;
+
   if (announce) {
     const where = res.source.is_ionq ? `on IonQ (${res.source.name})` : `on ${res.source.name}`;
-    setStatus(`Done ${where} in ${res.source.seconds} s. ${fb.headline} ${res.target.short.split(" ")[0]} = ${pct(res.target.value, 1)}.`,
+    setStatus(`Done ${where} in ${res.source.seconds} s. ${fb.headline} ${measure} = ${pct(res.target.value, 1)}.`,
       fb.solved ? "success" : "ready");
   }
 }
@@ -351,6 +467,7 @@ async function run(where) {
     onTick: (s) => setStatus(`Running ${shots} shots on ${label}… ${s} s`, "running"),
   });
   setBusy(false);
+  renderCode(); // a preview skipped while busy would otherwise stay stale
   if (!res) return;
   if (!res.ok) {
     if (res.code === "ionq_job_used") backendState.ionq_job_used = true;
@@ -365,7 +482,7 @@ async function run(where) {
   lastResults[runLevelId] = res;
   save();
   renderBackend();
-  renderLevelList();
+  renderNav();
   renderRunsUsed();
   if (level.id === runLevelId) renderResult(res);
 }
@@ -376,16 +493,17 @@ async function resetLevel() {
   delete lastResults[level.id];
   save();
   selectLevel(level.id);
-  setStatus(`Level reset: gates back to the start${level.has_mystery ? ", and a new mystery phase" : ""}. Run counter at 0.`);
+  setStatus(`Puzzle reset: gates back to the start${level.has_mystery ? ", and a new mystery phase" : ""}. Run counter at 0.`);
 }
 
 // --------------------------------------------------------------------- boot
 
 async function boot() {
-  applyHero(els.hero);
+  hydrateIcons(els.app);
+  const demo = mountDemo(els.demo, { reduceMotion });
+
   const info = await bridge.info();
   if (!info?.ok) throw new Error(info?.error ?? "Python module did not load");
-  INFO = info;
   if (info.attribution) els.attribution.textContent = info.attribution;
   for (const l of info.levels) LEVELS[l.id] = l;
   ORDER = info.levels.map((l) => l.id);
@@ -401,18 +519,47 @@ async function boot() {
   if (b?.ok) backendState = b;
   renderBackend();
 
+  els.start.addEventListener("click", (e) => {
+    selectLevel(els.start.dataset.target || ORDER[0]);
+    showView("play", { instant: e.detail === 0 });
+  });
+  els.howtoBtn.addEventListener("click", () => {
+    els.rules.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    els.rules.focus({ preventScroll: true });
+  });
+  els.back.addEventListener("click", (e) => showView("start", { instant: e.detail === 0 }));
   els.runLocal.addEventListener("click", () => run("local"));
   els.runBackend.addEventListener("click", () => run("backend"));
+  els.runLastJump.addEventListener("click", () => {
+    els.feedback.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    els.feedback.focus({ preventScroll: true });
+  });
   els.reset.addEventListener("click", resetLevel);
   els.hintBtn.addEventListener("click", showHint);
   els.controls.addEventListener("submit", (e) => e.preventDefault());
-  els.next.addEventListener("click", () => {
+  els.next.addEventListener("click", (e) => {
     const id = els.next.dataset.target;
-    if (id) selectLevel(id, { focus: true });
+    if (id === "__start__") showView("start", { instant: e.detail === 0 });
+    else if (id) selectLevel(id, { focus: true });
   });
 
-  const start = unlocked.includes(state.current) ? state.current : unlocked[unlocked.length - 1] ?? ORDER[0];
-  selectLevel(start);
+  // Re-draw the circuit when its box crosses the compact-layout width.
+  if (typeof ResizeObserver === "function") {
+    let wasCompact = null;
+    new ResizeObserver(([entry]) => {
+      const w = entry.contentRect.width;
+      const compact = w > 0 && w < COMPACT_BELOW;
+      if (compact !== wasCompact) {
+        wasCompact = compact;
+        renderCircuit();
+      }
+    }).observe(els.circuit);
+  }
+
+  selectLevel(continueTarget());
+  renderNav();
+  els.start.disabled = false;
+  demo.play();
 }
 
 try {

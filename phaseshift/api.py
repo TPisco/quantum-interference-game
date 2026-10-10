@@ -225,7 +225,7 @@ def run_level(backend: Any = None, level_id: str = "invisible-ink", config: Any 
         outcomes.append(item)
 
     marginals = []
-    if level.num_qubits > 1:
+    if level.num_qubits > 1 and level.marginal_note:
         for q, name in enumerate(level.qubit_names):
             m = paths.marginal(probs, q, level.num_qubits)
             t = paths.marginal(theory["theory"], q, level.num_qubits)
@@ -241,6 +241,7 @@ def run_level(backend: Any = None, level_id: str = "invisible-ink", config: Any 
         "probabilities": probs,
         "outcomes": outcomes,
         "marginals": marginals,
+        "marginal_note": level.marginal_note if marginals else None,
         "revealed": reveal,
         "target": {**level.target.public(), "value": fb.value},
         "feedback": fb.as_dict(),

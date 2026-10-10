@@ -67,15 +67,24 @@ function stepActive(step, config) {
   return !step.toggle || Boolean(config[step.toggle]);
 }
 
+function stepName(level, s, config) {
+  const q = level.qubit_names[s.qubits[0]];
+  const both = s.qubits.map((i) => level.qubit_names[i]).join(" and ");
+  switch (s.gate) {
+    case "h": return `${s.label} on ${both}`;
+    case "x": return `${s.label} on ${q}`;
+    case "p": return `${s.label} on ${q}, φ = ${angleText(config[s.angle] ?? 0)}`;
+    case "cp": return `${s.label}: control ${q}, target ${level.qubit_names[s.qubits[1]]}, φ = ${angleText(config[s.angle] ?? 0)}`;
+    case "mystery": return `${s.label} on ${q}, value hidden`;
+    case "cx": return `${s.label}: control ${q}, target ${level.qubit_names[s.qubits[1]]}`;
+    case "diffuser": return `${s.label} on ${both}`;
+    default: return s.label;
+  }
+}
+
 export function describeCircuit(level, config) {
   const parts = level.steps.map((s) => {
-    const q = level.qubit_names[s.qubits[0]];
-    let name;
-    if (s.gate === "h") name = `${s.label} on ${q}`;
-    else if (s.gate === "p") name = `${s.label} on ${q}, φ = ${angleText(config[s.angle] ?? 0)}`;
-    else if (s.gate === "mystery") name = `${s.label} on ${q}, value hidden`;
-    else if (s.gate === "cx") name = `${s.label}: control ${q}, target ${level.qubit_names[s.qubits[1]]}`;
-    else name = s.label;
+    let name = stepName(level, s, config);
     if (s.toggle) name += stepActive(s, config) ? " (on)" : " (switched off)";
     if (s.role === "player") name += " [you control this]";
     return name;
@@ -83,91 +92,134 @@ export function describeCircuit(level, config) {
   return `Circuit for level ${level.number}, starting from |0⟩: ${parts.join("; then ")}; then measure every qubit.`;
 }
 
-export function circuitSVG(level, config) {
+const INK = { text: "#e8ecf8", muted: "#b4bedb", wire: "#8a96bf", player: "#5ce1e6", mystery: "#c4a3ff", phase: "#ffb000" };
+
+/** The circuit strip. compact: tighter geometry for narrow containers (qubit
+ *  names sit above their |0⟩ instead of beside it). */
+export function circuitSVG(level, config, { compact = false } = {}) {
   const n = level.num_qubits;
-  const colW = 96;
-  const x0 = 150;
-  const rowH = 84;
-  const y0 = 64;
-  const gx = (j) => x0 + colW * j + 32;
-  const gy = (q) => y0 + rowH * q;
+  const G = compact
+    ? { colW: 76, x0: 56, half: 26, rowH: 80, wireX: 40, nameFont: 12, capFont: 11 }
+    : { colW: 96, x0: 128, half: 30, rowH: 84, wireX: 126, nameFont: 15, capFont: 12 };
+  const gx = (j) => G.x0 + G.colW * j + G.half + 4;
+  const gy = (q) => 64 + G.rowH * q;
   const mx = gx(level.steps.length);
-  const width = mx + 60;
-  const height = gy(n - 1) + 52;
+  const width = mx + 44;
+  const height = gy(n - 1) + 56;
   const root = svg("svg", {
     viewBox: `0 0 ${width} ${height}`,
     role: "img",
     "aria-label": describeCircuit(level, config),
+    "data-compact": String(compact),
   });
 
   for (let q = 0; q < n; q++) {
-    root.append(
-      svg("text", { x: 8, y: gy(q) + 5, fill: "#e8ecf8", "font-size": 15, "font-weight": 700, text: level.qubit_names[q] }),
-      svg("text", { x: 96, y: gy(q) + 6, fill: "#b4bedb", "font-size": 16, "font-family": "monospace", text: "|0⟩" }),
-      svg("line", { x1: 126, y1: gy(q), x2: mx, y2: gy(q), stroke: "#8a96bf", "stroke-width": 2 }),
-    );
+    const y = gy(q);
+    if (compact) {
+      root.append(
+        svg("text", { x: 4, y: y - 14, fill: INK.text, "font-size": G.nameFont, "font-weight": 700, text: level.qubit_names[q] }),
+        svg("text", { x: 4, y: y + 6, fill: INK.muted, "font-size": 14, "font-family": "monospace", text: "|0⟩" }),
+      );
+    } else {
+      root.append(
+        svg("text", { x: 8, y: y + 5, fill: INK.text, "font-size": G.nameFont, "font-weight": 700, text: level.qubit_names[q] }),
+        svg("text", { x: 96, y: y + 6, fill: INK.muted, "font-size": 16, "font-family": "monospace", text: "|0⟩" }),
+      );
+    }
+    root.append(svg("line", { x1: G.wireX, y1: y, x2: mx, y2: y, stroke: INK.wire, "stroke-width": 2 }));
   }
+
+  const box = (x, y, label, look, { h = 44, w = 2 * G.half, size = 16 } = {}) => [
+    svg("rect", {
+      x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 9, fill: look.fill, stroke: look.stroke,
+      "stroke-width": look.player ? 3 : 2, "stroke-dasharray": look.dash,
+    }),
+    svg("text", {
+      x, y: y + size * 0.36, "text-anchor": "middle", fill: look.active ? INK.text : INK.wire,
+      "font-size": size, "font-weight": 700, "font-family": "monospace", text: label,
+    }),
+  ];
 
   level.steps.forEach((s, j) => {
     const x = gx(j);
     const active = stepActive(s, config);
     const player = s.role === "player";
     const mystery = s.gate === "mystery";
-    const stroke = !active ? "#8a96bf" : mystery ? "#c4a3ff" : player ? "#5ce1e6" : "#8a96bf";
-    const fill = !active ? "#0e1530" : mystery ? "#2a1f4a" : player ? "#10334a" : "#232d55";
-    const dash = active ? null : "6 5";
-    const captionY = s.gate === "cx" ? gy(0) - 34 : gy(s.qubits[0]) - 34;
+    const look = {
+      active, player,
+      stroke: !active ? INK.wire : mystery ? INK.mystery : player ? INK.player : INK.wire,
+      fill: !active ? "#0e1530" : mystery ? "#2a1f4a" : player ? "#10334a" : "#232d55",
+      dash: active ? null : "6 5",
+    };
+    const top = Math.min(...s.qubits);
+    const bottom = Math.max(...s.qubits);
     root.append(svg("text", {
-      x, y: captionY, "text-anchor": "middle", fill: player ? "#5ce1e6" : "#b4bedb",
-      "font-size": 12, "font-weight": player ? 700 : 400, text: s.short,
+      x, y: gy(top) - 34, "text-anchor": "middle", fill: player ? INK.player : INK.muted,
+      "font-size": G.capFont, "font-weight": player ? 700 : 400, text: s.short,
     }));
+    const angleLabel = (y) => svg("text", {
+      x, y, "text-anchor": "middle", fill: INK.phase, "font-size": 13, "font-weight": 700,
+      text: `${Math.round(Number(config[s.angle] ?? 0))}°`,
+    });
 
     if (s.gate === "cx") {
       const [c, t] = s.qubits;
       root.append(
-        svg("line", { x1: x, y1: gy(c), x2: x, y2: gy(t) + 16, stroke, "stroke-width": 3 }),
-        svg("circle", { cx: x, cy: gy(c), r: 7, fill: stroke }),
-        svg("circle", { cx: x, cy: gy(t), r: 16, fill, stroke, "stroke-width": 3 }),
-        svg("line", { x1: x - 10, y1: gy(t), x2: x + 10, y2: gy(t), stroke, "stroke-width": 3 }),
-        svg("line", { x1: x, y1: gy(t) - 10, x2: x, y2: gy(t) + 10, stroke, "stroke-width": 3 }),
+        svg("line", { x1: x, y1: gy(c), x2: x, y2: gy(t) + 16, stroke: look.stroke, "stroke-width": 3 }),
+        svg("circle", { cx: x, cy: gy(c), r: 7, fill: look.stroke }),
+        svg("circle", { cx: x, cy: gy(t), r: 16, fill: look.fill, stroke: look.stroke, "stroke-width": 3 }),
+        svg("line", { x1: x - 10, y1: gy(t), x2: x + 10, y2: gy(t), stroke: look.stroke, "stroke-width": 3 }),
+        svg("line", { x1: x, y1: gy(t) - 10, x2: x, y2: gy(t) + 10, stroke: look.stroke, "stroke-width": 3 }),
       );
-      return;
+    } else if (s.gate === "cp") {
+      const [c, t] = s.qubits;
+      root.append(
+        svg("line", { x1: x, y1: gy(c), x2: x, y2: gy(t) - 22, stroke: look.stroke, "stroke-width": 3, "stroke-dasharray": look.dash }),
+        svg("circle", { cx: x, cy: gy(c), r: 7, fill: look.stroke }),
+        ...box(x, gy(t), "P(φ)", look),
+      );
+      if (active) root.append(angleLabel(gy(t) + 40));
+    } else if (s.gate === "diffuser") {
+      const y = (gy(top) + gy(bottom)) / 2;
+      root.append(...box(x, y, "D", look, { h: gy(bottom) - gy(top) + 44, size: 22 }));
+    } else {
+      const label = { h: "H", x: "X", p: "P(φ)", mystery: "θ ?" }[s.gate] ?? s.gate;
+      for (const q of s.gate === "h" ? s.qubits : [s.qubits[0]]) {
+        root.append(...box(x, gy(q), label, look, { size: s.gate === "h" || s.gate === "x" ? 20 : 16 }));
+      }
+      if (active && s.gate === "p") root.append(angleLabel(gy(s.qubits[0]) + 40));
     }
-
-    const y = gy(s.qubits[0]);
-    root.append(svg("rect", {
-      x: x - 30, y: y - 22, width: 60, height: 44, rx: 9, fill, stroke,
-      "stroke-width": player ? 3 : 2, "stroke-dasharray": dash,
-    }));
-    let label = "H";
-    if (s.gate === "p") label = "P(φ)";
-    if (mystery) label = "θ ?";
-    root.append(svg("text", {
-      x, y: y + 6, "text-anchor": "middle", fill: active ? "#e8ecf8" : "#8a96bf",
-      "font-size": s.gate === "h" ? 20 : 16, "font-weight": 700, "font-family": "monospace", text: label,
-    }));
     if (!active) {
-      root.append(svg("text", { x, y: y + 40, "text-anchor": "middle", fill: "#b4bedb", "font-size": 12, text: "off" }));
-    } else if (s.gate === "p") {
-      const deg = Math.round(Number(config[s.angle] ?? 0));
-      root.append(svg("text", {
-        x, y: y + 40, "text-anchor": "middle", fill: "#ffb000", "font-size": 13, "font-weight": 700, text: `${deg}°`,
-      }));
+      root.append(svg("text", { x, y: gy(bottom) + 40, "text-anchor": "middle", fill: INK.muted, "font-size": 12, text: "off" }));
     }
   });
 
   for (let q = 0; q < n; q++) {
     const y = gy(q);
     root.append(
-      svg("rect", { x: mx - 22, y: y - 20, width: 44, height: 40, rx: 8, fill: "#232d55", stroke: "#e8ecf8", "stroke-width": 2 }),
-      svg("path", { d: `M ${mx - 13} ${y + 8} A 14 14 0 0 1 ${mx + 13} ${y + 8}`, fill: "none", stroke: "#e8ecf8", "stroke-width": 2 }),
-      svg("line", { x1: mx, y1: y + 9, x2: mx + 9, y2: y - 10, stroke: "#e8ecf8", "stroke-width": 2 }),
+      svg("rect", { x: mx - 22, y: y - 20, width: 44, height: 40, rx: 8, fill: "#232d55", stroke: INK.text, "stroke-width": 2 }),
+      svg("path", { d: `M ${mx - 13} ${y + 8} A 14 14 0 0 1 ${mx + 13} ${y + 8}`, fill: "none", stroke: INK.text, "stroke-width": 2 }),
+      svg("line", { x1: mx, y1: y + 9, x2: mx + 9, y2: y - 10, stroke: INK.text, "stroke-width": 2 }),
     );
   }
   root.append(svg("text", {
-    x: mx, y: gy(0) - 34, "text-anchor": "middle", fill: "#b4bedb", "font-size": 12, text: "Measure",
+    x: mx, y: gy(0) - 34, "text-anchor": "middle", fill: INK.muted, "font-size": G.capFont, text: "Measure",
   }));
   return root;
+}
+
+/** Small dial showing a phase as an arrow turned counter-clockwise by deg
+ *  (same convention as the amplitude arrows). Decorative: the number is
+ *  always printed next to it. */
+export function phaseClock(deg) {
+  const r = (Number(deg) * Math.PI) / 180;
+  const x = 20 + 13 * Math.cos(r);
+  const y = 20 - 13 * Math.sin(r);
+  return svg("svg", { viewBox: "0 0 40 40", width: 36, height: 36, class: "ps-clock", "aria-hidden": "true" },
+    svg("circle", { cx: 20, cy: 20, r: 17, fill: "none", stroke: "#34406b", "stroke-width": 2 }),
+    svg("line", { x1: 20, y1: 20, x2: 37, y2: 20, stroke: "#34406b", "stroke-width": 1.5, "stroke-dasharray": "2 2" }),
+    svg("line", { x1: 20, y1: 20, x2: x, y2: y, stroke: INK.phase, "stroke-width": 3.5, "stroke-linecap": "round" }),
+    svg("circle", { cx: 20, cy: 20, r: 3, fill: INK.phase }));
 }
 
 // ---------------------------------------------------------------- histogram
@@ -246,8 +298,7 @@ export function marginalsTable(res) {
       el("td", { class: "ps-hist__num", text: res.revealed ? pct(m.theory["1"], 1) : "hidden" })));
   }
   table.append(body);
-  return el("div", {}, table, el("p", { class: "ps-note", text:
-    "Look at the photon alone: it stays near 50% whatever you do. Any interference pattern can only show up in the joint outcomes above." }));
+  return el("div", {}, table, res.marginal_note ? el("p", { class: "ps-note", text: res.marginal_note }) : null);
 }
 
 // ------------------------------------------------------------------ arrows
@@ -342,6 +393,7 @@ export function arrowReach(outcomes) {
 function interferenceKind(o) {
   if (o.interference > 1e-6) return "constructive";
   if (o.interference < -1e-6) return "destructive";
+  if (o.arrows.length === 0) return "no path reaches this outcome";
   if (o.arrows.length < 2) return "none (only one path)";
   return o.arrows.length === 2 ? "none (arrows at right angles)" : "none (cross terms cancel)";
 }
@@ -367,8 +419,8 @@ export function arrowKey() {
   const sample = (arm) => svg("svg", { width: 34, height: 10, "aria-hidden": "true" },
     svg("line", { x1: 2, y1: 5, x2: 32, y2: 5, stroke: arm === "sum" ? "#ffffff" : ARM[arm].color, "stroke-width": arm === "sum" ? 3 : 4, "stroke-dasharray": arm === "lower" ? "7 5" : null }));
   return el("p", { class: "ps-key" },
-    el("span", {}, sample("upper"), " upper path (solid)"),
-    el("span", {}, sample("lower"), " lower path, where phases act (dashed)"),
+    el("span", {}, sample("upper"), " upper path: first qubit 0 after the split (solid)"),
+    el("span", {}, sample("lower"), " lower path: first qubit 1 (dashed)"),
     el("span", {}, sample("sum"), " sum = what you measure"),
     el("span", {}, "dotted circle: the longest possible sum, labelled with its probability"));
 }
