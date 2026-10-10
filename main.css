@@ -324,6 +324,7 @@
 /* --------------------------------------------------------- play: stepper */
 .ps-stepper { margin: 16px 0 20px; }
 .ps-stepper__list {
+  position: relative; /* contain the screen-reader-only text of the pills */
   display: flex;
   gap: 8px;
   margin: 0;
@@ -335,6 +336,7 @@
 }
 .ps-stepper__list li { scroll-snap-align: start; flex: none; }
 .ps-lvl-pill {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -563,6 +565,7 @@
 
 /* -------------------------------------------------------------- buttons */
 .ps-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;

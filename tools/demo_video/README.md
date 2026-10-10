@@ -20,5 +20,12 @@ together (0.6–3×) and freeze frames absorb the rest. Captions are written fro
 authored text, timed with Whisper word timestamps when `faster-whisper` is available,
 and burned in. Loudness is normalised to −16 LUFS.
 
-Inputs not in the repo: the five screen recordings (`RunApp.mp4`, `level1.mp4`,
-`level2-3.mp4`, `readmeAndDevGuide.mp4`, `levelPy.mp4`) and the Higgsfield media.
+Inputs not in the repo: the screen recordings and the Higgsfield media.
+
+**Two cuts.** `edl.json` is the first cut, made from five recordings of the original
+three-level game (`RunApp.mp4`, `level1.mp4`, `level2-3.mp4`, `readmeAndDevGuide.mp4`,
+`levelPy.mp4`). The second cut covers the redesigned game (start page, five puzzles,
+phone layout). Its voiceover is in `script_v2.json` and its shot list in
+`docs/VIDEO_SCRIPT.md`; `edl_v2.json` is written once the new recordings
+(`01_start.mp4` … `08_docs.mp4`) exist, because cut points and zoom boxes are measured
+on the real footage.

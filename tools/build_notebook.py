@@ -10,7 +10,7 @@ code = nbf.v4.new_code_cell
 cells = [
 md("""# Phase Shift: the physics behind the game
 
-This notebook walks through the three levels of **Phase Shift** with plain Qiskit, then shows the
+This notebook walks through the five levels of **Phase Shift** with plain Qiskit, then shows the
 "amplitude arrows" the game draws, and how to run the same circuits on IonQ's simulator.
 
 * On **Qollab** the game itself is the web page (`index.html` + `main.js`); this notebook is a
@@ -89,7 +89,29 @@ for eraser in (False, True):
     photon = paths.marginal(probs, 0, 2)["1"]
     print(f"eraser {'on ' if eraser else 'off'}: P(disagree) = {disagree:.3f}, photon alone P(1) = {photon:.3f}")
 print(circuits.build_circuit(er, {"phi": 180, "eraser": True}).draw())"""),
-md("""## 6. Running on IonQ's simulator
+md("""## 6. Level 4, *Kickback*: the phase lands on the control
+A controlled phase CP(φ) adds φ only where both qubits are 1. With the target in |0⟩ nothing happens; flip the target
+to |1⟩ and the phase "kicks back" onto the control, where the second H turns it into a bit. The target never changes."""),
+code("""kb = get_level("kickback")
+for flip in (False, True):
+    probs = run(circuits.build_circuit(kb, {"phi": 180, "flip": flip}))
+    control = paths.marginal(probs, 0, 2)["1"]
+    target = paths.marginal(probs, 1, 2)["1"]
+    print(f"flip {'on ' if flip else 'off'}: P(control = 1) = {control:.3f}, P(target = 1) = {target:.3f}")
+print(circuits.build_circuit(kb, {"phi": 180, "flip": True}).draw())"""),
+md("""## 7. Level 5, *Amplifier*: Grover search on two qubits
+Mark door |11⟩ with a phase φ, then apply the diffuser (reflection about the average amplitude).
+With the diffuser on, P(|11⟩) = (10 − 6 cos φ)/16, which reaches 1 at φ = 180°: one oracle query finds the prize.
+The arrows explain it: four paths land on every door; on |11⟩ they line up, elsewhere they cancel in pairs."""),
+code("""amp = get_level("amplifier")
+for phi in (0, 90, 135, 180):
+    p11 = run(circuits.build_circuit(amp, {"phi": phi, "diffuser": True}))["11"]
+    print(f"phi = {phi:3d}°: P(|11>) = {p11:.3f}   theory {(10 - 6 * math.cos(math.radians(phi))) / 16:.3f}")
+qc = circuits.build_circuit(amp, {"phi": 180, "diffuser": True}, measure=False)
+for o in paths.analyze(qc)["outcomes"]:
+    arrows = ", ".join(f"{a['re']:+.2f}" for a in o["arrows"])
+    print(f"{o['label']}: arrows [{arrows}] -> sum {o['sum']['re']:+.2f}, P = {o['theory']:.2f}")"""),
+md("""## 8. Running on IonQ's simulator
 
 **On Qollab** you do not create a backend: press **Run**, pick IonQ's simulator in *Select QPU*, and the platform
 passes a `backend` object to the page; `phaseshift.api.run_level(backend, ...)` submits one single-circuit job.
@@ -102,7 +124,7 @@ code("""if os.environ.get("IONQ_API_KEY"):
     print(execution.to_probabilities(execution.run_circuit(ionq, qc, shots=1000)))
 else:
     print("IONQ_API_KEY not set: skipping the IonQ cell. On Qollab, select IonQ in 'Select QPU' instead.")"""),
-md("""## 7. Same thing through the game API
+md("""## 9. Same thing through the game API
 This is the exact call the web page makes (with `where="backend"` it would use Qollab's selected backend)."""),
 code("""from phaseshift import api
 res = api.run_level(None, "eraser", {"phi": 180, "eraser": True}, {"where": "local", "shots": 1000})

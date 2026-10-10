@@ -1,0 +1,31 @@
+{
+  "about": "Voiceover for the second demo cut (start page, five puzzles). 'text' is the caption text; 'tts' (when present) is what the voice reads. 'record' names the screen recording each segment cuts from (see docs/VIDEO_SCRIPT.md). Target total: about 2:45.",
+  "voice": {"model": "seed_audio", "voice": "Julian", "voice_id": "95429266-c0ac-4137-a209-63b8812b0f23"},
+  "segments": [
+    {"id": "s01", "seconds": 9, "record": "title card (Higgsfield title_card clip)",
+     "text": "Quantum computers aren't just fancy dice. Their power comes from interference: possibilities that add up, or cancel out. Phase Shift lets you make that happen."},
+    {"id": "s02", "seconds": 16, "record": "01_start.mp4",
+     "text": "It runs right here on Qollab. Press Run, pick IonQ's simulator, and the start page opens with a live interferometer. Turn the phase and watch the arrows: aligned, detector 1 lights up; opposite, it goes dark.",
+     "tts": "It runs right here on Qollab. Press Run, pick IonQ's simulator, and the start page opens with a live interferometer. Turn the phase and watch the arrows: aligned, detector one lights up; opposite, it goes dark."},
+    {"id": "s03", "seconds": 31, "record": "02_level1.mp4",
+     "text": "Level 1. A Hadamard splits the qubit into two paths, and I paint a phase on the lower one. 0°: 50/50. 90°: still 50/50. A measurement can't see a phase on its own. So I recombine the paths with a second Hadamard and set 180°. 100%. The arrows show why: on 0 they cancel, on 1 they line up. Then I confirm this exact circuit on IonQ's simulator. Three stars.",
+     "tts": "Level one. A Hadamard splits the qubit into two paths, and I paint a phase on the lower one. Zero degrees: fifty-fifty. Ninety: still fifty-fifty. A measurement can't see a phase on its own. So I recombine the paths with a second Hadamard and set one-eighty. One hundred percent. The arrows show why: on zero they cancel, on one they line up. Then I confirm this exact circuit on IonQ's simulator. Three stars."},
+    {"id": "s04", "seconds": 14, "record": "03_levels23.mp4",
+     "text": "In Dark Port, a detector's brightness tells you how far you are from a hidden phase. In the eraser level, a which-path detector kills interference until you erase what it knows."},
+    {"id": "s05", "seconds": 22, "record": "04_kickback.mp4",
+     "text": "Level 4 is new: Kickback. My phase gate now sits on a second qubit, and fires only when both are 1. With the target at 0, the phase vanishes. Flip the target with an X, and the phase kicks back onto the control. The target never changes. That's the trick inside Shor's algorithm.",
+     "tts": "Level four is new: Kickback. My phase gate now sits on a second qubit, and fires only when both are one. With the target at zero, the phase vanishes. Flip the target with an X, and the phase kicks back onto the control. The target never changes. That's the trick inside Shor's algorithm."},
+    {"id": "s06", "seconds": 23, "record": "05_amplifier.mp4",
+     "text": "Level 5, Amplifier, is Grover search. Four doors, the prize behind 11. Marking it with a phase alone changes nothing: every door stays at 25%. Switch on the diffuser, which reflects every amplitude about the average, and set the mark to 180°. One query, 100%. Four arrows line up on the prize.",
+     "tts": "Level five, Amplifier, is Grover search. Four doors, the prize behind one-one. Marking it with a phase alone changes nothing: every door stays at twenty-five percent. Switch on the diffuser, which reflects every amplitude about the average, and set the mark to one-eighty. One query, one hundred percent. Four arrows line up on the prize."},
+    {"id": "s07", "seconds": 15, "record": "06_code.mp4 + Higgsfield arrows_explainer cut-in",
+     "text": "Under the hood, each level is plain data. Qiskit builds your circuit, and an exact path sum draws every arrow. IonQ receives it compiled without re-optimising, so it runs exactly what you built."},
+    {"id": "s08", "seconds": 12, "record": "07_mobile.mp4",
+     "text": "It works on a phone, with Run always under your thumb, and it's fully keyboard and screen-reader accessible: every chart is also a table."},
+    {"id": "s09", "seconds": 10, "record": "08_docs.mp4",
+     "text": "It's all MIT licensed. To add a puzzle, describe it in levels.py and write one feedback function. The interface builds itself.",
+     "tts": "It's all MIT licensed. To add a puzzle, describe it in levels dot py and write one feedback function. The interface builds itself."},
+    {"id": "s10", "seconds": 7, "record": "outro card (Higgsfield video_title_bg)",
+     "text": "Phase Shift. Make the probabilities interfere. Thanks for watching!"}
+  ]
+}

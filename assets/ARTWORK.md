@@ -4,7 +4,7 @@ All images were generated with **Higgsfield** (MCP tool `generate_image_batch`, 
 
 | File | Size | Used in | Alt text |
 |---|---|---|---|
-| `generated/hero_banner.png` | 16:9, 2k | Header background (decorative, `aria-hidden`) | (none, decorative) |
+| `generated/hero_banner.png` | 16:9, 2k | Formerly the header background; the redesigned start page uses a live demo instead. Kept as a video B-roll start frame | (none, decorative) |
 | `generated/level1_invisible_ink.png` | 1:1, 1k | Level 1 header | A qubit splits into a blue and an orange path; a faint painted phase on the orange path only shows up as ripples where the paths meet again. |
 | `generated/level2_dark_port.png` | 1:1, 1k | Level 2 header | An interferometer with a violet mystery crystal on one path; one output detector glows, the other is completely dark. |
 | `generated/level3_eraser.png` | 1:1, 1k | Level 3 header | A small eye-shaped detector watches two light paths while an eraser wipes away its line of sight and interference ripples return. |
@@ -29,7 +29,7 @@ python tools/embed_art.py          # downloads the files listed in the manifest,
 python tools/embed_art.py --offline  # if you saved the PNGs into assets/generated/ yourself
 ```
 
-Until then, `web/art.js` draws simple SVG emblems with the same alt text, so the game looks finished either way.
+Until then, `web/art.js` draws simple SVG emblems with the same alt text, so the game looks finished either way. Levels 4 (Kickback) and 5 (Amplifier) only have SVG emblems so far; to give them images, add prompts to the manifest in the same style and re-run the tool.
 
 > The build environment used for this repository could not reach Higgsfield's CDN (`d8j0ntlcm91z4.cloudfront.net`), so the PNGs are not committed yet. Run the command above on your machine, or download them from your Higgsfield library into `assets/generated/` with the file names in the table.
 
