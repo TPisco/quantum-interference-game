@@ -4,6 +4,10 @@
 
 This is the second cut. It shows the redesigned game: the start page with its live interferometer, five puzzles (two of them new), Confirm on IonQ, and the phone layout. The voiceover is finished; you record the screen to fit it. The text is also in [`tools/demo_video/script_v2.json`](../tools/demo_video/script_v2.json) and the timed captions in [`tools/demo_video/captions_v2.srt`](../tools/demo_video/captions_v2.srt).
 
+## Finished video
+
+**[phase_shift_demo_final.mp4](https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/6df5bebe-f6e6-46fd-ac90-d8eab94cb544.mp4)** (2:53, 1920×1080, 27 MB): the recordings cut to the voice with `tools/demo_video/edit_v2.py`, the four Higgsfield clips, labels, the end card and burned-in captions ([`captions_v2.srt`](../tools/demo_video/captions_v2.srt)). The recordings ran on Qollab's built-in simulator, so three lines were re-voiced to match what is on screen: s02 "press Run, pick a simulator", s09a "Then Run on QPU sends this exact circuit to the backend you chose in Qollab, as one job." and s09b "Here that's Qollab's built-in simulator. Pick IonQ's simulator in Select QPU, and the same button earns the IonQ star." The cue sheet below still describes the IonQ version.
+
 ## Download
 
 Everything is on Higgsfield's CDN (no sign-in needed):

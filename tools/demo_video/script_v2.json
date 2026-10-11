@@ -17,7 +17,7 @@
    "id": "s02",
    "title": "Runs on Qollab",
    "record": "01_start.mp4",
-   "text": "It runs on Qollab: press Run, choose IonQ's simulator, and Qiskit starts in your browser.",
+   "text": "It runs on Qollab: press Run, pick a simulator, and Qiskit starts in your browser.",
    "words": 15
   },
   {
@@ -98,17 +98,17 @@
   },
   {
    "id": "s09a",
-   "title": "Confirm on IonQ",
+   "title": "Run on QPU",
    "record": "05_amplifier.mp4",
-   "text": "Now, Confirm on IonQ. This exact circuit goes to IonQ's simulator as one job.",
-   "words": 14
+   "text": "Then Run on QPU sends this exact circuit to the backend you chose in Qollab, as one job.",
+   "words": 18
   },
   {
    "id": "s09b",
-   "title": "One job per Run",
+   "title": "IonQ earns the IonQ star",
    "record": "05_amplifier.mp4",
-   "text": "Qollab allows one IonQ job per Run, so you practise in the browser, then confirm once. IonQ agrees: three stars.",
-   "words": 20
+   "text": "Here that's Qollab's built-in simulator. Pick IonQ's simulator in Select QPU, and the same button earns the IonQ star.",
+   "words": 19
   },
   {
    "id": "s10",
@@ -141,7 +141,8 @@
   "gap_s": 0.4,
   "lead_s": 0.8,
   "tail_s": 2.0,
-  "total": "2:55.6",
-  "loudness": "-16 LUFS, true peak -1.5 dB"
+  "total": "2:52.8",
+  "loudness": "-16 LUFS, true peak -1.5 dB",
+  "note": "Final cut: the recordings used Qollab's built-in simulator, so s02, s09a and s09b were re-voiced to match (jobs 02eb361d, 4734533d, 2e965c23). Edit: edit_v2.py."
  }
 }

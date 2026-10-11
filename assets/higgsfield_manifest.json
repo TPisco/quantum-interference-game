@@ -110,7 +110,7 @@
         },
         {
           "line": "s02",
-          "job_id": "28bea790-1512-4556-b54e-5a02c24b21d3"
+          "job_id": "02eb361d-88c3-4926-863f-b46d75bcce2b"
         },
         {
           "line": "s03a",
@@ -154,11 +154,11 @@
         },
         {
           "line": "s09a",
-          "job_id": "8060beb0-e556-4376-857f-67ee59c4e73d"
+          "job_id": "4734533d-ed09-4a43-a930-16c7fef30c09"
         },
         {
           "line": "s09b",
-          "job_id": "632314b2-e840-43c3-b2b2-4aef4ab18b0f"
+          "job_id": "2e965c23-37dd-4a70-bfcc-794a66f6ebde"
         },
         {
           "line": "s10",
@@ -260,6 +260,12 @@
       }
     ],
     "deliverables": [
+      {
+        "key": "final_video",
+        "media_id": "6df5bebe-f6e6-46fd-ac90-d8eab94cb544",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/6df5bebe-f6e6-46fd-ac90-d8eab94cb544.mp4",
+        "about": "finished demo video, 2:53, 1920x1080, voice, clips and burned-in captions"
+      },
       {
         "key": "kit_zip",
         "media_id": "e9963e2f-835f-46d6-8499-b3bd299adf72",
