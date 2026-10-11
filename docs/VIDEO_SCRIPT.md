@@ -34,7 +34,7 @@ Times are positions in the full voice track. Each row runs until the next one st
 | 0:28.5 | s04 Level 1 | 0°: 50/50. 180°: still 50/50 | `02_level1.mp4` |
 | 0:49.0 | s05 Recombine | Recombine on: 100%; the arrow cards | `02_level1.mp4` |
 | 1:08.4 | s06 Levels 2 and 3 | Dark Port and the Eraser, already solved | `03_levels23.mp4` |
-| 1:22.6 | s07a New: Kickback | Kickback emblem | **Clip 3** at 1.5× (3.3 s) so the slider drag in s07b stays on screen |
+| 1:22.6 | s07a New: Kickback | Kickback emblem | **Clip 3** at 1.6× (3.15 s, 1:22.56 to 1:25.72) so the slider drag in s07b stays on screen |
 | 1:25.7 | s07b Kickback demo | Flip off: phase vanishes. Flip on: control reads 1 | `04_kickback.mp4` |
 | 1:43.8 | s08a New: Amplifier | Amplifier emblem | **Clip 4** at 1×, hold the last frame 1 s |
 | 1:49.8 | s08b Amplifier demo | 25% each; diffuser on: 100%; four arrows | `05_amplifier.mp4` |
@@ -55,11 +55,10 @@ The exact start and end of every line is in `timing_sheet.txt` in the zip; every
 * Chrome or Edge, 1920×1080, full screen (F11), browser zoom 100% (110% only if every framing check below still passes). OS "reduce motion" must be **off**, or the start-page sweep is skipped.
 * Fresh progress: DevTools, *Application → Local storage →* the Qollab origin, delete the key `phase-shift:v1`, close DevTools, reload.
 * **One Qollab Run covers takes 01 to 05 and 07.** Do not press Stop or reload until s09 is done, so the single IonQ job is still free in s09.
-* Warm-up, off camera, in that same Run: click **Start level 1**, press **Run simulation** once (the first run loads Qiskit's simulator and is slow), scroll to **Reset puzzle** (in the row under the Run bar) and press it, then click **All puzzles**. The start button still reads "Start level 1".
 * Every time you drag a slider to 180°, check that the readout says **180° (π)**. If it shows 165° or 195°, click **+** or **−** once before you press Run.
 * Blur the Qollab account corner (username, avatar) in the edit.
 
-### `01_start.mp4` (s02, s03a, s03c; voice 15.4 s plus the loading wait)
+### `01_start.mp4` (s02, s03a, s03c; 15.4 s on screen, plus the loading wait and the hands-off stretch under Clip 2)
 
 Start on the Phase Shift project page on Qollab, the Run button in view, the pointer beside it. It is fine to fall behind the voice in the dialog: the editor speeds it up. Hands off once Python starts loading; keep recording until the start page fills in.
 
@@ -69,14 +68,16 @@ Start on the Phase Shift project page on Qollab, the Run button in view, the poi
 | | "press Run" | Click **Run**; the *Select QPU* dialog opens |
 | | "choose IonQ's simulator" | Pick the IonQ simulator, confirm the dialog |
 | | "Qiskit starts in your browser" | Grey skeletons and the pill "Loading Python and Qiskit…". Hands off, keep rolling (the wait is cut) |
-| s03a | "Here's the only rule you need" | The page fills in: "Start level 1" turns cyan, the pill reads "Backend: … (IonQ)", and the demo slider sweeps 0° to 180° by itself. **Do not touch the demo**, or the sweep stops |
+| s03a | "Here's the only rule you need" | The page fills in: "Start level 1" brightens from dimmed to full cyan (it is disabled while Python loads), the pill reads "Backend: … (IonQ)", and the demo slider sweeps 0° to 180° by itself (about 1.8 s). **Do not touch the demo**, or the sweep stops |
 | s03b | (Clip 2 plays) | Keep recording hands-off underneath |
 | s03c | "Lined up, a detector lights up" | Glide the pointer onto the **Detector \|1⟩** card: arrows aligned, long white sum, 100% |
 | | "Opposite, they cancel: it goes dark" | Move to the **Detector \|0⟩** card: arrows opposite, small ring, 0%. Then glide onto "Start level 1" **without clicking** |
 
+**Warm-up, off camera, right after take 01** (same Run, before take 02): click **Start level 1**, press **Run simulation** once (the first run loads Qiskit's simulator and is slow), scroll to **Reset puzzle** (in the row under the Run bar) and press it, then click **All puzzles**. The start button still reads "Start level 1".
+
 ### `02_level1.mp4` (s04, s05; 39.9 s)
 
-Same Run. Level 1 opens at 0° with **Recombine** off (its gate dashed, tagged "off"). Use only **Run simulation** in this take: exactly three runs, so Level 1 ends on 2 stars and the IonQ job stays unused. Recovery: **Reset puzzle** (scroll under the Run bar), then restart from s04.
+Same Run. Level 1 opens at 0° with **Recombine** off (its gate dashed, tagged "off"). Use only **Run simulation** in this take: exactly three runs, so Level 1 ends on 2 stars and the IonQ job stays unused. Recovery: **Reset puzzle** (scroll under the Run bar), click **All puzzles**, then restart from s04. If Level 1 was already solved in the failed take, the button now reads "Continue level 1" and the stepper pill shows Level 1's stars (Reset puzzle keeps stars): click the button on "Level one, Invisible Ink" all the same, and crop or blur the button label and the stepper stars in the edit.
 
 | Line | Phrase | Action |
 |---|---|---|
@@ -161,23 +162,23 @@ If the IonQ job fails or comes back under 90%: press Stop, then Run (IonQ simula
 
 ### `07_keyboard.mp4` and `07c_inspect.mp4` (s10, second half; record these **right after take 05**, same Run)
 
-* **Keyboard (about 4 s):** with Amplifier's results on screen, click the grey line "Rotates the arrow of the \|11⟩ door only. 180° flips its sign." (not the bold label), press Tab twice until the slider has the thick **yellow** focus outline, then start recording. Press Right (195°), Left (back to 180° (π)), Tab (the outline moves to "+").
+* **Keyboard (about 4 s):** take 05 ends on the start page, so first get back to Amplifier: click the **Amplifier** row ("Play again") you just framed, or scroll up and click **Continue level 5**. Amplifier's last result comes back. Scroll until the slider "Oracle phase φ on door \|11⟩" is visible, then click the grey line "Rotates the arrow of the \|11⟩ door only. 180° flips its sign." (not the bold label), press Tab twice until the slider has the thick **yellow** focus outline, then start recording. Press Right (195°), Left (back to 180° (π)), Tab (the outline moves to "+").
 * **Inspect (about 3 s, optional):** right-click the \|11⟩ arrow drawing, choose Inspect, then click the parent row `<svg viewBox="0 0 240 240" role="img" aria-label="Outcome |11⟩: 4 path arrows. …">`.
 
 ### `06_mobile.mp4` (s10, first half; about 3 s)
 
-Now press **Stop**, then **Run** and choose the IonQ simulator again (progress is saved), so the phone bar reads "Run" and "IonQ". Open DevTools device mode (Ctrl+Shift+M), device **iPhone 12 Pro** (390×844). Open Level 1 from the stepper, Recombine on, dial at 135°, scrolled to the circuit. Record: scroll slowly down past the dial (the Run bar stays pinned to the bottom), then tap **Run**; "Last run: … goal ≥ 90%" and "View results" appear.
+Now press **Stop**, then **Run** and choose the IonQ simulator again (progress is saved), so the phone bar reads "Run" and "IonQ". Open DevTools device mode (Ctrl+Shift+M), device **iPhone 12 Pro** (390×844). The game reopens on the start page. Scroll to "Five puzzles" and tap the **Invisible Ink** row ("Play again"). Recombine is still on and the dial still at 180° (π), both saved from take 02. Press **−** three times so the readout says **135° (3π/4)**, then scroll to the circuit. Record: scroll slowly down past the dial (the Run bar stays pinned to the bottom), then tap **Run**; "Last run: … goal ≥ 90%" and "View results" appear.
 
-### `08_code.mp4` (s11; about 11 s of the 14.8 s line, the rest comes from the take 05 tail)
+### `08_code.mp4` (s11; about 10.3 s of the 15.2 s on screen, the rest comes from the take 05 tail)
 
 Dark editor theme, font 18 to 20 pt, sidebar hidden. Run `python -m pytest -q` just before recording.
 
 | Phrase | Shot |
 |---|---|
 | "It's real Qiskit, MIT licensed" (about 2.5 s) | Take 05 tail: the "This circuit as Qiskit code" panel |
-| "with two hundred and seven tests, and every level is checked for IonQ" (about 6.5 s, record 8 s) | `tests/test_api_and_execution.py` at lines 164 and 165 (`@pytest.mark.parametrize("level", LEVELS, …)`, `def test_circuits_serialize_for_ionq_offline(level):`) with the terminal's last line "207 passed in …" |
-| "To add a puzzle, write one Level in levels dot py and one feedback function" (about 4.5 s) | Split editor: `phaseshift/levels.py` line 318 `KICKBACK = Level(` on the left, `phaseshift/game.py` line 152 `def _kickback(…)` on the right |
-| "The interface builds itself" (about 2 s) | Take 05 tail: the five level rows (frame the generated rows, not the "Five puzzles" heading) |
+| "with two hundred and seven tests, and every level is checked for IonQ" (about 5 s, record 8 s) | `tests/test_api_and_execution.py` at lines 164 and 165 (`@pytest.mark.parametrize("level", LEVELS, …)`, `def test_circuits_serialize_for_ionq_offline(level):`) with the terminal's last line "207 passed in …" |
+| "To add a puzzle, write one Level in levels dot py and one feedback function" (about 5.3 s, record 7 s) | Split editor: `phaseshift/levels.py` line 318 `KICKBACK = Level(` on the left, `phaseshift/game.py` line 152 `def _kickback(…)` on the right |
+| "The interface builds itself" (about 2.4 s) | Take 05 tail: the five level rows (frame the generated rows, not the "Five puzzles" heading) |
 
 ## Voiceover (exact text)
 
@@ -245,7 +246,7 @@ The voice reads numbers as words; the captions show digits. Times are in the ful
 * **Audio:** the voice track is already at −16 LUFS; no music needed.
 * **Privacy:** blur the Qollab account corner wherever it is visible.
 
-`tools/demo_video/render.py` can do all of this from an edit decision list. Send the recordings and `tools/demo_video/edl_v2.json` can be written with cut points, zoom boxes and blur boxes measured on the real footage.
+`tools/demo_video/render.py` can do the cuts, zooms, labels, end card and blur boxes from an edit decision list, but not yet with this cut's timing: it puts 0.35 s before and 0.45 s after every line (`VO_LEAD`, `VO_TAIL`), which would space the 17 lines 0.8 s apart (3:00.0), and it writes its own captions. Any video editor works instead: lay the full voice track on the timeline, cut the recordings to the start times above and import `captions_v2.srt`. Send the recordings and `tools/demo_video/edl_v2.json` can be written with cut points, zoom boxes and blur boxes measured on the real footage, with `render.py` reading the lead and tail from it and run with `--no-captions`.
 
 ## Higgsfield assets
 
@@ -253,7 +254,7 @@ The voice reads numbers as words; the captions show digits. Times are in the ful
 
 | Asset | How | Higgsfield ids |
 |---|---|---|
-| Voice, 17 lines | `seed_audio`, preset voice Julian (`95429266-c0ac-4137-a209-63b8812b0f23`), WAV 48 kHz. Cleaned with `vo_clean.py raw clean 0.55 0.42`, joined with `assemble.py script.json clean out.wav 0.4 0.8 2.0` | job ids in [`assets/higgsfield_manifest.json`](../assets/higgsfield_manifest.json) |
+| Voice, 17 lines | `seed_audio`, preset voice Julian (`95429266-c0ac-4137-a209-63b8812b0f23`), WAV 48 kHz. s03c cut to 3.80 to 8.95 s of take `bb0bbca9` (`ffmpeg -i bb0bbca9.wav -af "atrim=3.80:8.95,asetpts=PTS-STARTPTS" raw/s03c.wav`), then all lines cleaned with `vo_clean.py raw clean 0.55 0.42`, joined with `assemble.py script_v2.json clean phase_shift_vo_v2.wav 0.4 0.8 2.0` and captioned with `make_captions.py script_v2.json clean captions_v2.srt 0.4 0.8` | job ids in [`assets/higgsfield_manifest.json`](../assets/higgsfield_manifest.json) |
 | Clip 1 hook | Kling 3.0 `std`, 10 s, start and end keyframes; needle repainted with `clips/fix_hook.py` (Kling's needle wandered) and upscaled to 1080p | job `42b7921c-7491-4e1f-86ed-2a7a7d3ba77f` |
 | Clip 2 arrows | Drawn exactly with `clips/arrows_anim.py` (Kling job `6c224785-745f-4321-8a8c-f084a86ab273` drew the white sum arrow wrong, so it was not used) | no generation |
 | Clip 3 Kickback | Kling 3.0 `std`, 5 s, start and end keyframes, upscaled to 1080p | job `1c7fba75-b1df-4962-80f0-8e1671200efd` |
@@ -268,7 +269,7 @@ Keyframes are drawn from the game's own art by `tools/demo_video/clips/make_fram
 * **Prompt rules:** say "static locked-off camera", "flat 2D vector motion graphics", name every object by colour and position, say what must **not** move, and end with "No text, no new objects, no camera movement".
 * **If a preset is suggested** instead of running, resend with its `declined_preset_id`.
 * **After download:** `ffmpeg -i in.mp4 -vf "scale=1920:1080:flags=lanczos,unsharp=5:5:0.4" -c:v libx264 -crf 16 -preset slow -pix_fmt yuv420p out_1080.mp4`.
-* **Cost** (Starter, October 2026): Kling `std` 1.5 credits per second, voice about 0.6 credits per line. This cut used about 59 credits.
+* **Cost** (Starter, October 2026): Kling `std` 1.5 credits per second; voice 0.2 to 1.9 credits per line depending on its length (about 1 on average). This cut used about 59 credits: 39 for the four Kling clips (including the unused arrows try) and about 20 for 21 voice takes.
 
 ### Prompts used
 
@@ -288,7 +289,15 @@ Keyframes are drawn from the game's own art by `tools/demo_video/clips/make_fram
 
 ## Recording your own voice instead
 
-Read the voiceover above into a USB or phone microphone in a quiet room, one file per line (`s01.wav` … `s12.wav`, 17 files), then run `vo_clean.py` and `assemble.py` on them. The shot list works the same way; only the times shift.
+Read the voiceover above into a USB or phone microphone in a quiet room. Make one WAV per line, named by the id in its heading (17 files): `s01.wav`, `s02.wav`, `s03a.wav`, `s03b.wav`, `s03c.wav`, `s04.wav`, `s05.wav`, `s06.wav`, `s07a.wav`, `s07b.wav`, `s08a.wav`, `s08b.wav`, `s09a.wav`, `s09b.wav`, `s10.wav`, `s11.wav`, `s12.wav`. Put them in `tools/demo_video/raw/`, then run these from `tools/demo_video/`:
+
+```bash
+python3 vo_clean.py raw/ clean/ 0.55 0.42
+python3 assemble.py script_v2.json clean/ my_vo.wav 0.4 0.8 2.0       # prints the new timing sheet
+python3 make_captions.py script_v2.json clean/ my_captions.srt 0.4 0.8  # needs ffmpeg and faster-whisper
+```
+
+The shot list works the same way; only the times shift. Cut to the start times in the sheet that `assemble.py` prints, and import `my_captions.srt` instead of `captions_v2.srt`, which is timed to the Julian voice only.
 
 ## Publishing (must be viewable without signing in)
 

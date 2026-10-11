@@ -1,6 +1,6 @@
 """Render the Phase Shift demo video from an edit decision list (EDL).
 
-    python3 render.py edl.json --work out/ [--only seg03] [--preview]
+    python3 render.py edl.json --work out/ [--only s03,s04] [--reuse] [--segments-only] [--no-captions] [--preset veryfast]
 
 The EDL (see edl.json) lists segments in order. Each segment is either
 
@@ -612,7 +612,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("edl")
     ap.add_argument("--work", default="work")
-    ap.add_argument("--only", default=None, help="render only this segment id (for checks)")
+    ap.add_argument("--only", default=None, help="render only these segment ids, comma-separated (for checks)")
     ap.add_argument("--preset", default=None)
     ap.add_argument("--no-captions", action="store_true")
     ap.add_argument("--reuse", action="store_true",

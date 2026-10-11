@@ -29,6 +29,7 @@ phone layout). Its voice is finished and the screen is recorded to fit it, follo
 cue sheet in `docs/VIDEO_SCRIPT.md`:
 
 ```bash
+ffmpeg -i bb0bbca9.wav -af "atrim=3.80:8.95,asetpts=PTS-STARTPTS" raw/s03c.wav  # s03c: the usable part of take bb0bbca9
 python3 vo_clean.py raw/ clean/ 0.55 0.42                                # 17 TTS lines
 python3 assemble.py script_v2.json clean/ phase_shift_vo_v2.wav 0.4 0.8 2.0 # 2:55.6 + timing sheet
 python3 make_captions.py script_v2.json clean/ captions_v2.srt 0.4 0.8     # needs faster-whisper
