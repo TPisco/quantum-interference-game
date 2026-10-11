@@ -93,5 +93,210 @@
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261010_145443_7b490f88-644a-4d36-a287-a00fec3cce48.mp4",
       "prompt": "Subtle motion graphics: on the left dial the blue and orange arrows glide into line and the long white sum arrow grows; on the right dial the two arrows swing to face opposite directions and the sum shrinks to a small pulsing dot. Flat vector style, steady camera, no text, no new objects."
     }
-  ]
+  ],
+  "demo_video_v2": {
+    "generated_on": "2026-10-11",
+    "notes": "Second demo cut. Kling 3.0 'pro' mode needs the Higgsfield Plus plan, so clips were made in 'std' (1280x720) and upscaled. Keyframes are drawn by tools/demo_video/clips/make_frames.py.",
+    "voice": {
+      "model": "seed_audio",
+      "voice": "Julian",
+      "voice_id": "95429266-c0ac-4137-a209-63b8812b0f23",
+      "format": "wav",
+      "sample_rate": 48000,
+      "jobs": [
+        {
+          "line": "s01",
+          "job_id": "31c65ece-06af-4308-928a-fff23205ab9f"
+        },
+        {
+          "line": "s02",
+          "job_id": "28bea790-1512-4556-b54e-5a02c24b21d3"
+        },
+        {
+          "line": "s03a",
+          "job_id": "625505e6-2cc3-41c8-8d96-e147aebfe1d8"
+        },
+        {
+          "line": "s03b",
+          "job_id": "ebd1eb68-e71e-4fe8-ba73-f1ce7de95259"
+        },
+        {
+          "line": "s03c",
+          "job_id": "bb0bbca9-da94-4dfc-b4a2-c792c3a1ac8d"
+        },
+        {
+          "line": "s04",
+          "job_id": "84baa35a-1b79-4d9a-8536-663c6b06e420"
+        },
+        {
+          "line": "s05",
+          "job_id": "9dd8c97e-9ee2-45e2-ba3f-ccf5fb97f70b"
+        },
+        {
+          "line": "s06",
+          "job_id": "805caa64-b5a1-49fc-a476-cea9b455877f"
+        },
+        {
+          "line": "s07a",
+          "job_id": "7ee1af16-7088-4e26-88d3-cd0f285bff5f"
+        },
+        {
+          "line": "s07b",
+          "job_id": "85e0e114-4c4e-4d90-bf1f-7610b15bae13"
+        },
+        {
+          "line": "s08a",
+          "job_id": "e0733c24-4f6e-4646-8826-6f04defc6102"
+        },
+        {
+          "line": "s08b",
+          "job_id": "6147c890-013e-4716-a02c-94481a3aae73"
+        },
+        {
+          "line": "s09a",
+          "job_id": "8060beb0-e556-4376-857f-67ee59c4e73d"
+        },
+        {
+          "line": "s09b",
+          "job_id": "632314b2-e840-43c3-b2b2-4aef4ab18b0f"
+        },
+        {
+          "line": "s10",
+          "job_id": "d2f6fc2c-c7f7-4267-bfef-ed288ec404d2"
+        },
+        {
+          "line": "s11",
+          "job_id": "2828a92b-ec14-4e17-aa3b-bd0ff97a6983"
+        },
+        {
+          "line": "s12",
+          "job_id": "aa77fb31-aa98-409b-afeb-e6381a06becd"
+        }
+      ],
+      "note": "s03c is take bb0bbca9 trimmed to 3.80-8.95 s (an earlier take dropped its first sentence). Text in tools/demo_video/script_v2.json."
+    },
+    "keyframes": [
+      {
+        "key": "hook_start",
+        "media_id": "c3cde4f5-f33a-45b1-b689-64b810c9f5b2",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/c3cde4f5-f33a-45b1-b689-64b810c9f5b2.png"
+      },
+      {
+        "key": "hook_end",
+        "media_id": "bb17c478-d270-4200-a323-221a3b8bfc14",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/bb17c478-d270-4200-a323-221a3b8bfc14.png"
+      },
+      {
+        "key": "arrows_start",
+        "media_id": "5e1cfd42-b3ca-4532-bf8a-46e6328cdbcf",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/5e1cfd42-b3ca-4532-bf8a-46e6328cdbcf.png"
+      },
+      {
+        "key": "arrows_end",
+        "media_id": "6eeee90e-8c9e-4829-b363-b8c8ec0486ee",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/6eeee90e-8c9e-4829-b363-b8c8ec0486ee.png"
+      },
+      {
+        "key": "kick_start",
+        "media_id": "c8c7a366-4a92-426b-af25-9120b6133cb1",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/c8c7a366-4a92-426b-af25-9120b6133cb1.png"
+      },
+      {
+        "key": "kick_end",
+        "media_id": "de8eec5e-49b4-49d6-922e-2df273553527",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/de8eec5e-49b4-49d6-922e-2df273553527.png"
+      },
+      {
+        "key": "amp_start",
+        "media_id": "dc93cb34-8c15-4077-b7dd-c63c0e3466ac",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/dc93cb34-8c15-4077-b7dd-c63c0e3466ac.png"
+      },
+      {
+        "key": "amp_end",
+        "media_id": "000ba310-682d-47e8-bd25-ae16bacbb325",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/000ba310-682d-47e8-bd25-ae16bacbb325.png"
+      }
+    ],
+    "clips": [
+      {
+        "key": "hook",
+        "job_id": "42b7921c-7491-4e1f-86ed-2a7a7d3ba77f",
+        "model": "kling3_0 (std, 10 s, sound off, 16:9, start_image + end_image)",
+        "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261011_125649_42b7921c-7491-4e1f-86ed-2a7a7d3ba77f.mp4",
+        "start_image": "c3cde4f5-f33a-45b1-b689-64b810c9f5b2",
+        "end_image": "bb17c478-d270-4200-a323-221a3b8bfc14",
+        "status": "used: needle repainted with tools/demo_video/clips/fix_hook.py, upscaled to 1080p",
+        "prompt": "Static locked-off camera, no zoom, no pan. Flat 2D vector motion graphics: an interferometer drawn in glowing lines on a dark navy background. A soft glow flows from the left along the white beam, then along the solid blue upper path and the dashed amber lower path at the same time, and the two merge at the right node. The white needle inside the small amber dial turns slowly a quarter turn counter-clockwise, from pointing up to pointing left, then stays still. As it turns, the upper right detector fades smoothly to dark while the lower right detector brightens into a strong white-cyan glow with a soft halo. Calm and elegant. The lower half of the frame stays empty dark navy. No text, no new objects, no particles, no 3D."
+      },
+      {
+        "key": "arrows",
+        "job_id": "6c224785-745f-4321-8a8c-f084a86ab273",
+        "model": "kling3_0 (std, 6 s, sound off, 16:9, start_image + end_image)",
+        "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261011_125649_6c224785-745f-4321-8a8c-f084a86ab273.mp4",
+        "start_image": "5e1cfd42-b3ca-4532-bf8a-46e6328cdbcf",
+        "end_image": "6eeee90e-8c9e-4829-b363-b8c8ec0486ee",
+        "status": "not used: the white sum arrow was physically wrong; replaced by tools/demo_video/clips/arrows_anim.py",
+        "prompt": "Static locked-off camera. Flat 2D vector motion graphics on dark navy, two dotted circles side by side. In each circle a blue arrow points right from the centre and a dashed orange arrow starts at its tip. In the left circle the orange arrow swings smoothly down until it lines up with the blue arrow, and the white sum arrow from the centre grows long. In the right circle the orange arrow swings smoothly back until it points the opposite way, and the white sum arrow shrinks into a small white ring at the centre. Smooth and calm. No text, no new objects, no camera movement."
+      },
+      {
+        "key": "kick",
+        "job_id": "1c7fba75-b1df-4962-80f0-8e1671200efd",
+        "model": "kling3_0 (std, 5 s, sound off, 16:9, start_image + end_image)",
+        "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261011_125650_1c7fba75-b1df-4962-80f0-8e1671200efd.mp4",
+        "start_image": "c8c7a366-4a92-426b-af25-9120b6133cb1",
+        "end_image": "de8eec5e-49b4-49d6-922e-2df273553527",
+        "status": "used, upscaled to 1080p",
+        "prompt": "Static locked-off camera. Flat 2D vector motion graphics on dark navy: a diamond made of a solid blue upper path and a dashed amber lower path between two white nodes, and a straight white target wire below it, joined to the diamond by a short cyan link. The white target wire stays perfectly steady at constant brightness the whole time; nothing travels along it. The faint curved cyan arrow beside the link lights up and glows brightly, the dashed amber lower path brightens, and the right white node blooms with a soft cyan halo. Calm and smooth. No text, no new objects, no camera movement."
+      },
+      {
+        "key": "amp",
+        "job_id": "110364ea-6191-4c8e-b5c7-dba68a24a0f9",
+        "model": "kling3_0 (std, 5 s, sound off, 16:9, start_image + end_image)",
+        "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/hf_20261011_125650_110364ea-6191-4c8e-b5c7-dba68a24a0f9.mp4",
+        "start_image": "dc93cb34-8c15-4077-b7dd-c63c0e3466ac",
+        "end_image": "000ba310-682d-47e8-bd25-ae16bacbb325",
+        "status": "used, upscaled to 1080p",
+        "prompt": "Static locked-off camera. Flat 2D vector motion graphics on dark navy: four equal blue bars stand on a thin baseline under a dashed amber line, with a small amber diamond marker above the fourth bar. All four bars change at the same moment, simultaneously, with no sweep and no left-to-right motion: the first three bars sink smoothly down to the baseline while the fourth bar rises tall and turns glowing cyan, and the marker rises with it. The dashed amber line stays in place. Calm and smooth. No text, no new objects, no camera movement."
+      }
+    ],
+    "deliverables": [
+      {
+        "key": "kit_zip",
+        "media_id": "e9963e2f-835f-46d6-8499-b3bd299adf72",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/e9963e2f-835f-46d6-8499-b3bd299adf72.zip",
+        "about": "voice (WAV, MP3, 17 lines), captions, timing sheet, 4 clips, outro still"
+      },
+      {
+        "key": "voice_mp3",
+        "media_id": "7c31f795-a5aa-4421-997f-0f6c7a22453c",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/7c31f795-a5aa-4421-997f-0f6c7a22453c.mp3",
+        "about": "full voiceover, 2:55.6, -16 LUFS"
+      },
+      {
+        "key": "clip1_hook_1080",
+        "media_id": "64605ade-2d92-41b3-816c-a450eb7ff774",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/64605ade-2d92-41b3-816c-a450eb7ff774.mp4"
+      },
+      {
+        "key": "clip2_arrows_1080",
+        "media_id": "301575dc-faff-42d6-ab3f-c56e62e017ec",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/301575dc-faff-42d6-ab3f-c56e62e017ec.mp4"
+      },
+      {
+        "key": "clip3_kickback_1080",
+        "media_id": "5973ec40-9f3b-4faa-aeb0-43d80d59d5fb",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/5973ec40-9f3b-4faa-aeb0-43d80d59d5fb.mp4"
+      },
+      {
+        "key": "clip4_amplifier_1080",
+        "media_id": "8b31ca4d-f9c0-4962-94d3-d3e4ab93c37f",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/8b31ca4d-f9c0-4962-94d3-d3e4ab93c37f.mp4"
+      },
+      {
+        "key": "outro_bg_1080",
+        "media_id": "1e7d7e5d-332c-4340-b242-0b9851ad01fa",
+        "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3HP5aHvMkn2ykh0zkqgQ1Jb9kuf/1e7d7e5d-332c-4340-b242-0b9851ad01fa.png"
+      }
+    ]
+  }
 }

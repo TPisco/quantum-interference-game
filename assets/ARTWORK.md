@@ -13,6 +13,8 @@ All images were generated with **Higgsfield** (MCP tool `generate_image_batch`, 
 
 Video clips (Higgsfield `generate_video_batch`, model **Kling 3.0**, 5 s, silent, start frame = the image above): `title_card` (job `22a0aaad-f1fd-473f-811d-ed501b8a5b8b`) and `arrows_explainer` (job `7b490f88-644a-4d36-a287-a00fec3cce48`).
 
+The second demo cut uses four newer clips drawn from the game's own art (Kling 3.0 with start and end keyframes, plus one exact animation): see `demo_video_v2` in the manifest and [docs/VIDEO_SCRIPT.md](../docs/VIDEO_SCRIPT.md#higgsfield-assets).
+
 ## Style
 
 Flat, minimal vector look with quantum motifs (two paths, beam splitters, ripples), "no text" in every prompt, and the game's palette passed as `colors`:

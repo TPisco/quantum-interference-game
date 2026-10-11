@@ -1,10 +1,11 @@
 """Tidy TTS voiceover files: trim the ends and shorten over-long pauses.
 
-    python3 vo_clean.py in_dir out_dir
+    python3 vo_clean.py in_dir out_dir [max_pause keep_pause]
 
 TTS engines sometimes leave multi-second gaps inside a sentence. Any internal
 silence longer than MAX_PAUSE is cut down to KEEP_PAUSE; leading and trailing
 silence is trimmed to a few frames. Normal pauses (commas, full stops) stay.
+The second cut uses 0.55 0.42 to keep the full track under three minutes.
 """
 
 from __future__ import annotations
@@ -66,6 +67,8 @@ def clean(src: Path, dst: Path) -> str:
 
 if __name__ == "__main__":
     src_dir, out_dir = Path(sys.argv[1]), Path(sys.argv[2])
+    if len(sys.argv) > 4:
+        MAX_PAUSE, KEEP_PAUSE = float(sys.argv[3]), float(sys.argv[4])
     out_dir.mkdir(parents=True, exist_ok=True)
     for f in sorted(src_dir.glob("*.wav")):
         print(clean(f, out_dir / f.name))
