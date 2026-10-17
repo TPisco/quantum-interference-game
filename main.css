@@ -680,6 +680,35 @@
   padding: 10px 16px;
   font-weight: 700;
 }
+/* Interference curve (unlocks once a level is solved). */
+.ps-curve { margin-top: 16px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--panel-2); }
+.ps-curve summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 48px;
+  cursor: pointer;
+  padding: 10px 16px;
+  font-weight: 700;
+}
+.ps-curve__badge { font-weight: 400; color: var(--muted); font-size: 0.9rem; }
+.ps-curve > .ps-note, .ps-curve > div { margin: 0 16px 12px; }
+.ps-curve__svg { display: block; width: 100%; height: auto; max-width: 480px; }
+.ps-curve__goal { fill: rgba(74, 222, 128, 0.14); }
+.ps-curve__grid { stroke: var(--line-soft); stroke-width: 1; }
+.ps-curve__tick { fill: var(--muted); font-size: 13px; font-family: var(--font); }
+.ps-curve__goal-label { fill: var(--ok); font-size: 12px; font-weight: 700; font-family: var(--font); }
+.ps-curve__line { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; }
+.ps-curve__now { stroke: var(--lower); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.ps-curve__marker circle { fill: var(--lower); stroke: var(--bg); stroke-width: 2; }
+.ps-curve__marker[data-met="true"] circle { fill: var(--ok); }
+.ps-curve__now-text { font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 8px !important; }
+@media (forced-colors: active) {
+  .ps-curve__line { stroke: CanvasText; }
+  .ps-curve__marker circle { fill: Highlight; }
+}
+
 .ps-pre {
   margin: 0 12px 12px;
   padding: 12px;

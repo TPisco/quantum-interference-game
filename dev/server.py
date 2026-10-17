@@ -51,7 +51,7 @@ class FakeIonQ:
 
         time.sleep(1.5)  # a remote job is not instant
         return self._sim.run(circuit, shots=shots)
-ALLOWED = {"info", "backend_info", "default_config", "progress_status", "preview", "run_level"}
+ALLOWED = {"info", "backend_info", "default_config", "progress_status", "preview", "run_level", "sweep"}
 
 
 class State:

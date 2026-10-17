@@ -33,6 +33,8 @@ After every run the game shows:
 
 Stars: ★ solved · ★ within par runs · ★ confirmed on IonQ's simulator. Solving a level unlocks the next.
 
+**Interference curve (unlocks per level once solved).** Below the controls, a panel draws the exact goal value for every phase φ from 0° to 360°, with your other gates as they are set. Turn the dial and a marker slides along the curve; flip a gate and the whole curve changes shape (a flat line means no interference). It shows *why* your answer works, not just that it does, and it stays locked until the puzzle is solved so it never gives the answer away (Dark Port's hidden phase in particular). The curve comes from `api.sweep()` (statevector theory, no backend job).
+
 Full design (learning objectives, every level's circuit, physics, hints and feedback): [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md).
 
 | Level 1, solved | Level 4 (Kickback), solved | Level 5 (Amplifier), solved |
@@ -80,7 +82,7 @@ python -m phaseshift                     # every level: a first try and the solu
 python -m phaseshift --level invisible-ink --phi 180 --on recombine
 IONQ_API_KEY=... python -m phaseshift --backend ionq --noise forte-1
 
-pytest                                   # 207 tests: physics, path sums, API, IonQ serialization
+pytest                                   # 216 tests: physics, path sums, API, IonQ serialization
 ```
 
 `dev/index.html` wraps the same body-only `index.html` that Qollab uses and maps the module name `phaseshift.api` to `dev/py-shim.js`, which forwards calls to `dev/server.py`. The page code is identical in both places.
@@ -123,6 +125,16 @@ docs/                           game design, developer guide, Qollab page text, 
 ```
 
 Qollab requires `index.html`, `main.js` and `main.css` at the project root, so they live there rather than in `web/`.
+
+## Push your changes to GitHub
+
+```bash
+python tools/push.py "Describe your change"              # tests, commit everything, push the current branch
+python tools/push.py "Try an idea" --branch my-feature   # push to a new or other branch
+python tools/push.py "WIP" --no-tests                    # skip pytest
+```
+
+From Python: `from tools.push import push_to_github; push_to_github("Describe your change")`. It stops before committing if a test fails, and uses your own git credentials.
 
 ## Publish on Qollab
 

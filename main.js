@@ -21,7 +21,7 @@ import { icon, hydrateIcons } from "./web/icons.js";
 import { mountDemo } from "./web/demo.js";
 import {
   el, angleText, pct, circuitSVG, histogramTable, goalMeter,
-  marginalsTable, arrowCard, arrowKey, arrowReach, phaseClock,
+  marginalsTable, arrowCard, arrowKey, arrowReach, phaseClock, interferenceCurve,
 } from "./web/render.js";
 
 const $ = (id) => document.getElementById(id);
@@ -47,6 +47,9 @@ const els = {
   goalText: $("ps-goal-text"),
   circuit: $("ps-circuit"),
   controls: $("ps-controls"),
+  curve: $("ps-curve"),
+  curveBadge: $("ps-curve-badge"),
+  curveBody: $("ps-curve-body"),
   runLast: $("ps-run-last"),
   runLastText: $("ps-run-last-text"),
   runLastJump: $("ps-run-last-jump"),
@@ -319,7 +322,10 @@ function onConfigChange() {
   save();
   renderCircuit();
   clearTimeout(previewTimer);
-  previewTimer = setTimeout(renderCode, 120);
+  previewTimer = setTimeout(() => {
+    renderCode();
+    renderCurve();
+  }, 120);
 }
 
 const COMPACT_BELOW = 520;
@@ -339,6 +345,32 @@ async function renderCode() {
     els.code.textContent = p.qiskit_code;
     els.circuitText.textContent = p.circuit_text;
   }
+}
+
+// The interference curve is a reward: it unlocks once a level is solved, so it
+// never gives a puzzle away (Dark Port's hidden phase in particular).
+function curveUnlocked() {
+  return (state.progress.stars?.[level.id] ?? 0) > 0;
+}
+
+let curveRequest = 0;
+async function renderCurve() {
+  if (!level) return;
+  const open = curveUnlocked();
+  els.curve.dataset.locked = String(!open);
+  els.curveBadge.textContent = open ? "" : "· unlocks when you solve this puzzle";
+  if (!open) {
+    els.curveBody.replaceChildren(el("p", { class: "ps-hidden-note", text:
+      "Solve this puzzle first. Then this panel draws the goal value for every phase φ, so you can see exactly why your answer works and how each gate reshapes the interference." }));
+    return;
+  }
+  if (!els.curve.open || bridge.busy) return;
+  const ticket = ++curveRequest;
+  const a = attempt();
+  const sw = await bridge.sweep(level.id, a.config, a.seed, true);
+  if (ticket !== curveRequest || !sw?.ok || sw.level !== level.id) return;
+  if (sw.hidden) return;
+  els.curveBody.replaceChildren(interferenceCurve(sw));
 }
 
 function renderRunsUsed() {
@@ -394,6 +426,7 @@ function selectLevel(id, { focus = false } = {}) {
   renderControls();
   renderCircuit();
   renderCode();
+  renderCurve();
   renderRunsUsed();
   resetHints();
   if (lastResults[id]) renderResult(lastResults[id], { announce: false });
@@ -484,6 +517,7 @@ async function run(where) {
   renderBackend();
   renderNav();
   renderRunsUsed();
+  renderCurve(); // solving unlocks it
   if (level.id === runLevelId) renderResult(res);
 }
 
@@ -536,6 +570,9 @@ async function boot() {
   });
   els.reset.addEventListener("click", resetLevel);
   els.hintBtn.addEventListener("click", showHint);
+  els.curve.addEventListener("toggle", () => {
+    if (els.curve.open) renderCurve();
+  });
   els.controls.addEventListener("submit", (e) => e.preventDefault());
   els.next.addEventListener("click", (e) => {
     const id = els.next.dataset.target;

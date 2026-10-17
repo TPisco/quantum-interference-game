@@ -136,6 +136,56 @@ def preview(level_id: str, config: Any = None, seed: Any = 0) -> dict[str, Any]:
             "qiskit_code": circuits.qiskit_code(level, cfg)}
 
 
+SWEEP_STEP = 5  # degrees between points of the interference curve
+
+
+@_safe
+def sweep(level_id: str, config: Any = None, seed: Any = 0, reveal: Any = False) -> dict[str, Any]:
+    """Interference curve: the exact goal value for every phase φ, other gates as set.
+
+    The player's angle control is swept from 0° to 360°; every toggle keeps its
+    current setting, so switching a gate on or off reshapes the curve (flat line =
+    no interference). Nothing runs on a backend: this is statevector theory.
+
+    Levels with a hidden phase (Dark Port) would give the answer away, so they
+    only return a curve when ``reveal`` is true (the UI passes it once solved).
+    """
+    level = get_level(str(level_id))
+    cfg = circuits.normalize_config(level, _py(config))
+    angle = next((c for c in level.controls if c.kind == "angle"), None)
+    if angle is None:
+        raise ApiError(f"level {level.id!r} has no phase to sweep")
+    has_mystery = any(s.gate == "mystery" for s in level.steps)
+    if has_mystery and not bool(reveal):
+        return {"level": level.id, "hidden": True}
+
+    from qiskit.quantum_info import Statevector
+
+    def value_at(phi: float) -> float:
+        qc = circuits.build_circuit(level, {**cfg, angle.id: phi % 360}, seed=int(seed or 0),
+                                    measure=False)
+        probs = {format(i, f"0{level.num_qubits}b"): float(p)
+                 for i, p in enumerate(Statevector(qc).probabilities())}
+        return level.target.value(probs)
+
+    points = [{"phi": float(d), "value": round(value_at(d), 6)}
+              for d in range(0, 361, SWEEP_STEP)]
+    values = [p["value"] for p in points]
+    best = (max if level.target.op == ">=" else min)(points[:-1], key=lambda p: p["value"])
+    current = float(cfg[angle.id])
+    return {
+        "level": level.id,
+        "hidden": False,
+        "control": angle.id,
+        "label": angle.label,
+        "points": points,
+        "current": {"phi": current, "value": round(value_at(current), 6)},
+        "best": best,
+        "flat": max(values) - min(values) < 1e-6,
+        "target": level.target.public(),
+    }
+
+
 # --------------------------------------------------------------------------
 # Running a level
 # --------------------------------------------------------------------------
