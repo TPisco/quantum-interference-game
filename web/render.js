@@ -424,3 +424,52 @@ export function arrowKey() {
     el("span", {}, sample("sum"), " sum = what you measure"),
     el("span", {}, "dotted circle: the longest possible sum, labelled with its probability"));
 }
+
+// ------------------------------------------------------- interference curve
+
+/** Goal value against the phase φ (0° to 360°), for the gates as they are set now.
+ *  The goal region is shaded, the curve is drawn solid, and a marker shows the
+ *  current φ. A text sentence carries the same information for screen readers. */
+export function interferenceCurve(sw) {
+  const W = 360, H = 180, L = 46, R = 14, T = 12, B = 32;
+  const pw = W - L - R, ph = H - T - B;
+  const x = (deg) => L + (pw * deg) / 360;
+  const y = (v) => T + ph * (1 - v);
+  const t = sw.target;
+  const goalWord = t.op === ">=" ? "at least" : "at most";
+  const measure = t.short.split(/ (?=[≥≤])/)[0];
+  const met = (v) => (t.op === ">=" ? v >= t.threshold : v <= t.threshold);
+
+  const band = t.op === ">="
+    ? svg("rect", { x: L, y: y(1), width: pw, height: y(t.threshold) - y(1), class: "ps-curve__goal" })
+    : svg("rect", { x: L, y: y(t.threshold), width: pw, height: y(0) - y(t.threshold), class: "ps-curve__goal" });
+  const grid = [];
+  for (const v of [0, 0.5, 1]) {
+    grid.push(svg("line", { x1: L, x2: L + pw, y1: y(v), y2: y(v), class: "ps-curve__grid" }),
+      svg("text", { x: L - 6, y: y(v) + 4, "text-anchor": "end", class: "ps-curve__tick", text: `${v * 100}%` }));
+  }
+  for (const d of [0, 90, 180, 270, 360]) {
+    grid.push(svg("line", { x1: x(d), x2: x(d), y1: T, y2: T + ph, class: "ps-curve__grid" }),
+      svg("text", { x: x(d), y: H - 10, "text-anchor": "middle", class: "ps-curve__tick", text: `${d}°` }));
+  }
+  const line = sw.points.map((p, i) => `${i ? "L" : "M"}${x(p.phi).toFixed(1)},${y(p.value).toFixed(1)}`).join(" ");
+  const cur = sw.current;
+  const marker = svg("g", { class: "ps-curve__marker", "data-met": String(met(cur.value)) },
+    svg("line", { x1: x(cur.phi), x2: x(cur.phi), y1: T, y2: T + ph, class: "ps-curve__now" }),
+    svg("circle", { cx: x(cur.phi), cy: y(cur.value), r: 6 }));
+
+  const now = `At φ = ${angleText(cur.phi)}: ${measure} = ${pct(cur.value, 1)} (${met(cur.value) ? "goal met" : "goal not met"}).`;
+  const shape = sw.flat
+    ? `The curve is flat at ${pct(cur.value, 1)}: with the gates as they are, the phase changes nothing, so there is no interference.`
+    : `It swings between ${pct(Math.min(...sw.points.map((p) => p.value)), 0)} and ${pct(Math.max(...sw.points.map((p) => p.value)), 0)}; the best phase is φ = ${angleText(sw.best.phi)} (${pct(sw.best.value, 1)}).`;
+  const label = `Interference curve: ${measure} against the phase φ from 0° to 360°, goal ${goalWord} ${pct(t.threshold)}. ${now} ${shape}`;
+
+  const chart = svg("svg", { viewBox: `0 0 ${W} ${H}`, class: "ps-curve__svg", role: "img", "aria-label": label },
+    band, ...grid,
+    svg("text", { x: L + pw - 6, y: (t.op === ">=" ? y(1) : y(0)) + (t.op === ">=" ? 14 : -5), "text-anchor": "end", class: "ps-curve__goal-label", text: "goal" }),
+    svg("path", { d: line, class: "ps-curve__line" }),
+    marker);
+  return el("div", { class: "ps-curve__body" }, chart,
+    el("p", { class: "ps-curve__now-text", "aria-hidden": "true" }, now),
+    el("p", { class: "ps-note", "aria-hidden": "true" }, shape));
+}

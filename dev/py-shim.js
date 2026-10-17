@@ -28,3 +28,4 @@ export const default_config = fn("default_config");
 export const progress_status = fn("progress_status");
 export const preview = fn("preview");
 export const run_level = fn("run_level");
+export const sweep = fn("sweep");

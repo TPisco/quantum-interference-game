@@ -233,3 +233,51 @@ def test_progression_unlocks_in_order_and_keeps_best():
 def test_is_ionq_by_name(name, expected):
     backend = type("B", (), {"name": name})()
     assert execution.is_ionq(backend) is expected
+
+
+# --------------------------------------------------------------------------
+# Interference curve (api.sweep)
+# --------------------------------------------------------------------------
+
+def test_sweep_matches_known_formulas():
+    import math
+
+    r = api.sweep("invisible-ink", {"phi": 90, "recombine": True}, 0, False)
+    assert r["ok"] and not r["hidden"] and not r["flat"]
+    assert len(r["points"]) == 73 and r["points"][0]["phi"] == 0 and r["points"][-1]["phi"] == 360
+    for p in r["points"]:
+        assert p["value"] == pytest.approx(math.sin(math.radians(p["phi"]) / 2) ** 2, abs=1e-6)
+    assert r["current"] == {"phi": 90.0, "value": pytest.approx(0.5, abs=1e-6)}
+    assert r["best"]["phi"] == 180 and r["best"]["value"] == pytest.approx(1.0)
+
+    amp = api.sweep("amplifier", {"phi": 0, "diffuser": True}, 0, False)
+    for p in amp["points"]:
+        assert p["value"] == pytest.approx((10 - 6 * math.cos(math.radians(p["phi"]))) / 16, abs=1e-6)
+
+
+def test_sweep_is_flat_without_interference():
+    r = api.sweep("invisible-ink", {"phi": 0, "recombine": False}, 0, False)
+    assert r["ok"] and r["flat"]
+    assert all(p["value"] == pytest.approx(0.5) for p in r["points"])
+
+
+def test_sweep_hides_the_mystery_phase_until_revealed():
+    hidden = api.sweep("dark-port", {"phi": 0}, 7, False)
+    assert hidden == {"ok": True, "level": "dark-port", "hidden": True}
+    shown = api.sweep("dark-port", {"phi": 0}, 7, True)
+    assert shown["ok"] and not shown["hidden"]
+    # The darkest phase cancels the hidden one: phi = -theta (mod 360).
+    assert shown["best"]["phi"] == (-mystery_phase(7)) % 360
+    assert shown["best"]["value"] == pytest.approx(0.0, abs=1e-9)
+
+
+@pytest.mark.parametrize("level", LEVELS, ids=lambda lvl: lvl.id)
+def test_sweep_works_on_every_level(level):
+    r = api.sweep(level.id, level.default_config(), 1, True)
+    assert r["ok"], r
+    assert all(0.0 <= p["value"] <= 1.0 for p in r["points"])
+
+
+def test_sweep_bad_level_is_an_error_not_an_exception():
+    r = api.sweep("no-such-level", {}, 0, True)
+    assert r["ok"] is False and r["code"] == "bad_input"

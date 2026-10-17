@@ -117,6 +117,12 @@
 
           <form class="ps-controls" id="ps-controls" aria-label="Circuit controls"></form>
 
+          <details class="ps-curve" id="ps-curve">
+            <summary><span data-icon="atom" data-size="18"></span> Interference curve <span class="ps-curve__badge" id="ps-curve-badge"></span></summary>
+            <p class="ps-note">Exact theory for every phase φ from 0° to 360°, with your other gates as they are now. Turn the dial or flip a gate and watch the curve move. A flat line means the paths cannot interfere.</p>
+            <div id="ps-curve-body" aria-live="off"></div>
+          </details>
+
           <div class="ps-run">
             <p class="ps-run__last" id="ps-run-last" hidden>
               <span id="ps-run-last-text"></span>

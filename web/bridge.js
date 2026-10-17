@@ -75,6 +75,7 @@ export function createBridge(api) {
     progressStatus: (progress) => raw("progress_status", [progress]),
     preview: (levelId, config, seed) => raw("preview", [levelId, config, seed]),
     defaultConfig: (levelId) => raw("default_config", [levelId]),
+    sweep: (levelId, config, seed, reveal) => raw("sweep", [levelId, config, seed, reveal]),
 
     /** Run a level. Returns null if another run is in progress. */
     async runLevel(levelId, config, options, { onTick } = {}) {
